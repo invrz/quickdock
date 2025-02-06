@@ -1,7 +1,7 @@
 # counter.py
 
 import keyboard
-import webview
+import screeninfo
 
 import menu_options
 
@@ -55,37 +55,36 @@ class Listener:
 
 
     def show_main_ui(self):
-        # Run the Electron-React UI
-        # subprocess.Popen(["./ui/bin/kbrd-trkr-ui.exe"])        
-        htmlStr = """
-            <html>
-                <style>
-                    *, :root, body{
-                        background-color: pink;
-                    }
-                </style>
-                <script>
-                    var cnt = 0
-                    function incCounter(){
-                        cnt += 1
-                        document.getElementById('counter').innerHTML = cnt
-                    }
-                </script>
-                <div>
-                    <h1>meh types x<span id='counter'>0</span></h1>
-                    <button onclick='incCounter()'>increase meh types</button>
-                <div>
-            </html>
-        """
-        self.webUiObj.load_html(htmlStr)
-        self.webUiObj.resize(800, 450)
+        # Load the React UI
+        self.webUiObj.load_url("http://localhost:8000/")
+
+        # Resize the window to the desired dimensions
+        window_width = 800
+        window_height = 450
+        self.webUiObj.resize(window_width, window_height)
+
+        # Get screen dimensions (first monitor)
+        screen = screeninfo.get_monitors()[0]
+        screen_width = screen.width
+        screen_height = screen.height
+
+        # Calculate the position to center the window
+        window_x = (screen_width - window_width) // 2
+        window_y = (screen_height - window_height) // 2
+
+        # Move the window to the calculated position
+        self.webUiObj.move(window_x, window_y)
+
+        # Show the WebView window
         self.webUiObj.show()
+
+        # Flag that the WebView is visible
         self.isWebUiObjVisible = True
 
     def hide_main_ui(self):
         # Run the Electron-React UI
-        # subprocess.Popen(["./ui/bin/kbrd-trkr-ui.exe"])    
-        self.webUiObj.load_html("<h1>hi</h1>")
+        # subprocess.Popen(["./ui/bin/kbrd-trkr-ui.exe"]) 
         self.webUiObj.resize(0, 0)
-        self.webUiObj.hide()
+        self.webUiObj.hide()   
+        self.webUiObj.load_html("<h1>hi</h1>")
         self.isWebUiObjVisible = False

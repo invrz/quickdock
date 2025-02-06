@@ -21,7 +21,7 @@ def read_current_preferences_from_json(filename):
 
 def toggle_run_at_startup():
     # Change run at startup behavior boolean value to reverse
-    filename = './ui/data/preferences.json'
+    filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
     toggleTo = not preferences['runAtStartup']
     preferences['runAtStartup'] = toggleTo
@@ -33,7 +33,7 @@ def toggle_run_at_startup():
 
 def toggle_historical_data():
     # Change save historical behavior boolean value to reverse
-    filename = './ui/data/preferences.json'
+    filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
     toggleTo = not preferences['saveHistoricalData']
     preferences['saveHistoricalData'] = toggleTo
@@ -51,7 +51,7 @@ def open_react_ui():
 
 def open_data_folder():
     # Open the data folder
-    folder_path = "./ui/data/"
+    folder_path = "./data/"
     try:
         winshell.open_folder(folder_path)
     except Exception as e:

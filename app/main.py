@@ -6,6 +6,7 @@ import webview
 import startup_options
 import menu_options
 from listener import Listener
+import os
 
 def read_template_from_json(filename):
     with open(filename, 'r') as file:
@@ -21,14 +22,14 @@ def listenerLogic(webUIObj):
     listener.start_listening()
 
 def start_application():
-    # Assuming preferences file exists and is named 'preferences.json' in the same directory
+        # Assuming preferences file exists and is named 'preferences.json' in the same directory
     preferences = read_preferences_from_json('./data/preferences.json')
     #preferences = read_preferences_from_json('./data/preferences.json')
 
     # Run preferences check
     startup_options.run_at_startup(preferences.get("runAtStartup"))
     
-    webUI = webview.create_window("QuickDock", "https://shivendrasaurav.vercel.app/", width=0, height=0, frameless=True, on_top=True)
+    webUI = webview.create_window("QuickDock", "http://localhost:8000/", width=0, height=0, frameless=True, on_top=True)
     webview.start(listenerLogic, webUI)
 
     # Start the listener
