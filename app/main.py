@@ -1,12 +1,11 @@
 import json
-import threading
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
 import webview
+from jsapi import API
 import startup_options
 import menu_options
 from listener import Listener
-import os
 
 def read_template_from_json(filename):
     with open(filename, 'r') as file:
@@ -28,8 +27,10 @@ def start_application():
 
     # Run preferences check
     startup_options.run_at_startup(preferences.get("runAtStartup"))
+
+    api = API()
     
-    webUI = webview.create_window("QuickDock", "http://localhost:8000/", width=0, height=0, frameless=True, on_top=True)
+    webUI = webview.create_window("QuickDock", "http://localhost:8000/", width=0, height=0, frameless=True, on_top=False, js_api=api)
     webview.start(listenerLogic, webUI)
 
     # Start the listener

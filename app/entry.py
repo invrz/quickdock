@@ -1,16 +1,10 @@
 import datetime
-import http
 import os
 import threading
 from main import start_application
 from menu_options import open_react_ui
+from routes import MakeHandlerClassWithBakedInDirectory
 from socketserver import TCPServer
-
-def MakeHandlerClassWithBakedInDirectory(directory):
-  class Handler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-      super().__init__(*args, **kwargs, directory=directory)
-  return Handler
 
 def start_http_server():
     webdir = os.getcwd() + "\\ui\\dist"

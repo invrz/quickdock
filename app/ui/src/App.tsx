@@ -6,14 +6,16 @@ import "./index.css";
 
 import Launcher from './routes/launcher/main';
 import Preferences from './routes/preferences/main';
+import Apps from './routes/apps/main';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/preferences" />} />
+        <Route path="/" element={<Navigate to="/apps" />} />
         <Route path="/launcher" element={<Launcher />} />
         <Route path="/preferences" element={<Preferences />} />
+        <Route path="/apps" element={<Apps />} />
       </Routes>
     </Router>
   );
