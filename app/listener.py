@@ -10,53 +10,44 @@ class Listener:
         self.key_pressed_list = []
         self.webUiObj = currWebUiObj
         self.isWebUiObjVisible = False
-        
 
     def start_listening(self):
         try:
-            # Start listening to keystrokes
-            self.counter_hook_id = keyboard.on_press(self.process_key_press)
-
+            self.counter_hook_id_1 = keyboard.add_hotkey("ctrl+space", self.manage_main_ui)
+            self.counter_hook_id_2 = keyboard.add_hotkey("ctrl+shift+alt+space", self.quit_app)
         except Exception as e:
             print(f"Error starting listening: {e}")
 
     def stop_listening(self):
-        keyboard.unhook(self.counter_hook_id)
+        keyboard.remove_hotkey(self.counter_hook_id_1)
+        keyboard.remove_hotkey(self.counter_hook_id_2)
 
     def clear_key_pressed_list(self):
         self.key_pressed_list = []
-                
-    def process_key_press(self, key_event):
+
+    def quit_app(self):
         try:
-            global current_word
-            key = key_event.name
+            self.clear_key_pressed_list()
+            self.stop_listening()
+            self.webUiObj.destroy()
+            menu_options.exit_app()
+        except Exception as e:
+            print(f"Error quitting app: {e}")
 
-            self.key_pressed_list.append(key)
-            print(self.key_pressed_list)
-            
-            if(len(self.key_pressed_list)>3 and self.key_pressed_list[-1] == "space" and self.key_pressed_list[-2] == "alt" and self.key_pressed_list[-3] == "shift" and self.key_pressed_list[-4] == "ctrl"):
+    def manage_main_ui(self):
+        try:
+            if self.isWebUiObjVisible:
                 self.clear_key_pressed_list()
-                self.stop_listening()
-                self.webUiObj.destroy()
-                menu_options.exit_app()
-
-            if(len(self.key_pressed_list)>1 and self.key_pressed_list[-2] == "ctrl" and key=="space"):
-
-                if(self.isWebUiObjVisible == True):
-                    self.clear_key_pressed_list()
-                    self.hide_main_ui()
-                else:
-                    self.clear_key_pressed_list()
-                    self.show_main_ui()
-
-
+                self.hide_main_ui()
+            else:
+                self.clear_key_pressed_list()
+                self.show_main_ui()
         except Exception as e:
             print(f"Error processing key press: {e}")
 
-
     def show_main_ui(self):
         # Load the React UI
-        self.webUiObj.load_url("http://localhost:8000/")
+        self.webUiObj.load_url("http://localhost:8000/#launcher")
 
         # Resize the window to the desired dimensions
         window_width = 800
@@ -83,8 +74,7 @@ class Listener:
 
     def hide_main_ui(self):
         # Run the Electron-React UI
-        # subprocess.Popen(["./ui/bin/kbrd-trkr-ui.exe"]) 
         self.webUiObj.resize(0, 0)
-        self.webUiObj.hide()   
+        self.webUiObj.hide()
         self.webUiObj.load_html("<h1>hi</h1>")
         self.isWebUiObjVisible = False

@@ -18,6 +18,7 @@ input, select{
 
 .primary-add-button{
   padding: 8px 16px;
+  width: 100%;
 }
 .img-icon{
   width: 120px;
@@ -43,4 +44,29 @@ input, select{
 }
 .quiz-option-button:active{
   background-color: green;
+}
+
+/* render a smaller sized modal window title and content divs*/
+.window-view--small .window-title, .window-view--small .window-content{
+  width: 80%;
+  max-width: 480px;
+  margin: inherit auto;
+}
+
+.window-view--small .window-content{
+  height: clamp(320px, 80%, 640px);
+}
+
+.list-item{
+  padding: 8px 16px;
+  margin: 4px 0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-item .primary-add-button{
+  padding: 4px 8px;
+  width: 160px;
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import "patterns-ui/styles/main.css";
 import "./App.css";
@@ -12,7 +12,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/apps" />} />
+        <Route path="/" element={<Navigate to="/launcher" />} />
         <Route path="/launcher" element={<Launcher />} />
         <Route path="/preferences" element={<Preferences />} />
         <Route path="/apps" element={<Apps />} />

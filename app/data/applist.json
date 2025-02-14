@@ -1,0 +1,9 @@
+{
+    "applist": [
+        "appname",
+        [
+            "filePath",
+            "iconPath"
+        ]
+    ]
+}

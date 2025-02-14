@@ -1,10 +1,13 @@
 import json
 import sys
+import screeninfo
 import winshell
 import os
 import subprocess
 
 import webview
+
+from jsapi import API
 
 def write_new_preferences_to_json(newPreferences, filename):
     try:
@@ -43,11 +46,30 @@ def toggle_historical_data():
     os.remove('./trigger.lock')
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
-def open_react_ui():
+def openHelperUi():
     # Run the Electron-React UI
-    # subprocess.Popen(["./ui/bin/kbrd-trkr-ui.exe"])    
-    webview.create_window("QuickDock", "https://shivendrasaurav.vercel.app/")
 
+    # Get screen dimensions (first monitor)
+    screen = screeninfo.get_monitors()[0]
+    screen_width = screen.width
+    screen_height = screen.height
+
+    window_width = int(screen_width * 0.8)
+    window_height = int(screen_height * 0.8)
+
+    # Calculate the position to center the window
+    window_x = (screen_width - window_width) // 2
+    window_y = (screen_height - window_height) // 2
+
+    api = API()
+    
+    helperWebUI = webview.create_window("QuickDock Control Center", "http://localhost:8000/#apps", width=window_width, height=window_height, frameless=False, on_top=False, js_api=api)
+    
+    # Move the window to the calculated position after webview starts
+    def move_window():
+        helperWebUI.move(window_x, window_y)
+    
+    return helperWebUI, move_window
 
 def open_data_folder():
     # Open the data folder
@@ -61,6 +83,9 @@ def open_data_folder():
 
 def exit_app():
     # remove lock file on application exit
-    os.remove('./trigger.lock')
+    try:
+        os.remove('./trigger.lock')
+    except Exception as e:
+        print(f"Error removing lock file: {e}")
     # Placeholder function to exit the application
     os._exit(0)

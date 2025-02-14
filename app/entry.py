@@ -2,7 +2,7 @@ import datetime
 import os
 import threading
 from main import start_application
-from menu_options import open_react_ui
+from menu_options import openHelperUi
 from routes import MakeHandlerClassWithBakedInDirectory
 from socketserver import TCPServer
 
@@ -31,7 +31,7 @@ def main():
             file = open(r'trigger.lock', 'r')
             instancePID = file.read()
             if instancePID != str(os.getpid()):    
-                open_react_ui()
+                openHelperUi()
             file.close()
         else:
             log.write("file doesnt exists\n")

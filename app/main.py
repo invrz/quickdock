@@ -1,4 +1,5 @@
 import json
+import threading
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
 import webview
@@ -20,25 +21,10 @@ def listenerLogic(webUIObj):
     listener = Listener(webUIObj)
     listener.start_listening()
 
-def start_application():
-        # Assuming preferences file exists and is named 'preferences.json' in the same directory
-    preferences = read_preferences_from_json('./data/preferences.json')
-    #preferences = read_preferences_from_json('./data/preferences.json')
-
-    # Run preferences check
-    startup_options.run_at_startup(preferences.get("runAtStartup"))
-
+def start_webview():
     api = API()
-    
     webUI = webview.create_window("QuickDock", "http://localhost:8000/", width=0, height=0, frameless=True, on_top=False, js_api=api)
     webview.start(listenerLogic, webUI)
-
-    # Start the listener
-    # listener_thread = threading.Thread(target=listener.start_listening)
-    # listener_thread.start()
-    
-    # Create a system tray icon
-    create_tray_icon()
 
 def create_tray_icon():
     currentPreferences = read_preferences_from_json('./data/preferences.json')
@@ -67,8 +53,7 @@ def create_tray_icon():
 
     # Create the tray icon
     icon = Icon("Keyboard Heatmap Generator", icon_image, "Invrz Keyboard Server", menu = Menu(
-            MenuItem('Open', menu_options.open_react_ui), 
-            MenuItem('Open data folder', menu_options.open_data_folder), 
+            MenuItem('Open', menu_options.openHelperUi), 
             MenuItem('Exit', menu_options.exit_app), 
             Menu.SEPARATOR, 
             MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
@@ -78,10 +63,20 @@ def create_tray_icon():
 
     icon.run()
 
-    
+def start_application():
+    # Assuming preferences file exists and is named 'preferences.json' in the same directory
+    preferences = read_preferences_from_json('./data/preferences.json')
+
+    # Run preferences check
+    startup_options.run_at_startup(preferences.get("runAtStartup"))
+
+    # Start the tray icon in a separate thread
+    tray_thread = threading.Thread(target=create_tray_icon)
+    tray_thread.start()
+
+    # Start the webview on the main thread
+    start_webview()
 
 if __name__ == "__main__":
-
-    # Start app after tray icon creation
     start_application()
 
