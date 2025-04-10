@@ -28,10 +28,31 @@ const Apps = () => {
             body: JSON.stringify(dummyBody)
         });
         const res = await req.json();
-        console.log(res);
+        setAppList(JSON.parse(res.data));
+        console.log(res.data);
     }
 
-    const addAppToList = () => {
+    const removeAppFromList = async (appFilePath: string) => {
+        if (appFilePath) {
+            const newFileList = appList.filter((app) => app.appName.filePath !== appFilePath);
+            setAppList(newFileList);
+            // Send the new app list to the backend
+            const req = await fetch("http://localhost:8000/setFilesList", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newFileList)
+            });
+            const res = await req.json();
+            console.log(res);
+        }
+        else {
+            console.error("File/App Path is missing.")
+        }
+    }
+
+    const addAppToList = async () => {
         if (filePath && iconPath) {
             const fileListObj = {
                 appName: { appName, filePath, iconPath }
@@ -39,6 +60,21 @@ const Apps = () => {
             // Create a new array with the new app added
             const newFileList = [...appList, fileListObj];
             setAppList(newFileList);
+            // Send the new app list to the backend
+            const req = await fetch("http://localhost:8000/setFilesList", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newFileList)
+            });
+            const res = await req.json();
+            console.log(res);
+            // Reset the file and icon paths
+            setFilePath('');
+            setIconPath('');
+            setAppName('');
+
             toggleWindow("windowviewid");
         }
         else {
@@ -149,7 +185,8 @@ const Apps = () => {
                                         <li key={index} className="list-item">
                                             <img className="img-icon border--none" src={`http://localhost:8000/${app.appName.iconPath}`} alt={app.appName.appName} />
                                             <p>{app.appName.appName}</p>
-                                            <button className="primary-add-button bg-error border--none border--smooth bg-secondary-light text-secondary" onClick={() => launchAppFromList(app.appName.filePath)}>Launch</button>
+                                            <button className="primary-add-button bg-error border--none border--smooth bg-secondary-light text-secondary" onClick={() => removeAppFromList(app.appName.filePath)}>Remove</button>
+                                            <button className="primary-add-button bg-primary border--none border--smooth bg-secondary-light text-secondary" onClick={() => launchAppFromList(app.appName.filePath)}>Test Launch</button>
                                         </li>
                                     );
                                 })}

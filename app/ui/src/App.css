@@ -25,6 +25,35 @@ input, select{
   height: 120px;
   border-radius: 60px;
 }
+.app-icon{
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  border: 3px solid transparent;
+  transition: 200ms;
+}
+.app-icon:hover, .app-icon-hovered{
+  border: 3px solid #ffebb4;
+}
+.app-icon:active, .app-icon:focus{
+  border: 3px solid #69f569;
+}
+.search-bar{
+  padding: 8px 12px;
+  margin: 0 auto;
+  border: 3px solid;
+  transition: 200ms;
+  font-size: 1rem;
+}
+.search-bar:focus{
+  border-color: #ffebb4;
+  color: #ffebb4;
+}
+.search-bar:active{
+  border-color: #69f569;
+  color: #ffebb4;  
+}
 
 .quiz-nav-button{
   padding: 8px 16px;
