@@ -91,7 +91,12 @@ const Launcher = () => {
             } else if (event.key === 'Enter') {
                 if (appListToRender.length > 0) {
                     if (selectedApp !== "Start Typing To Search"){
-                        launchApp(selectedApp)
+                        // get path of selected app                
+                        const currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
+                        const selectedAppPath = appListToRender[currentIndex].appName.filePath;
+                        if (selectedAppPath) {
+                            launchApp(selectedAppPath);
+                        }
                     }
                 } else {
                     window.open(`https://www.google.com/search?q=${searchParam}`, '_blank');
@@ -114,46 +119,102 @@ const Launcher = () => {
             else if (event.key === 'ArrowLeft') {
                 const currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
                 if (currentIndex > 0) {
+                    const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+                    if (hoveredAppPrev) {
+                        hoveredAppPrev.classList.remove("app-icon-hovered");
+                    }
                     setSelectedApp(appListToRender[currentIndex - 1].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (currentIndex - 1)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
                 }
                 else {
+                    const hoveredAppPrev = document.querySelector("#app-id-" + (0)) as HTMLElement;
+                    if (hoveredAppPrev) {
+                        hoveredAppPrev.classList.remove("app-icon-hovered");
+                    }
                     setSelectedApp(appListToRender[appListToRender.length - 1].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (appListToRender.length - 1)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
                 }
             }
             else if (event.key === 'ArrowRight') {
                 const currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
                 if (currentIndex < appListToRender.length - 1) {
-                    setSelectedApp(appListToRender[currentIndex + 1].appName.appName);
                     const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
                     if (hoveredAppPrev) {
                         hoveredAppPrev.classList.remove("app-icon-hovered");
                     }
+                    setSelectedApp(appListToRender[currentIndex + 1].appName.appName);
                     const hoveredApp = document.querySelector("#app-id-" + (currentIndex + 1)) as HTMLElement;
                     if (hoveredApp) {
                         hoveredApp.classList.add("app-icon-hovered");
                     }
                 }
                 else {
-                    setSelectedApp(appListToRender[0].appName.appName);
                     const hoveredAppPrev = document.querySelector("#app-id-" + (appListToRender.length - 1)) as HTMLElement;
                     if (hoveredAppPrev) {
                         hoveredAppPrev.classList.remove("app-icon-hovered");
                     }
+                    setSelectedApp(appListToRender[0].appName.appName);
                     const hoveredApp = document.querySelector("#app-id-" + (0)) as HTMLElement;
                     if (hoveredApp) {
                         hoveredApp.classList.add("app-icon-hovered");
                     }
                 }
             }
-            else if(event.key === 'ArrowUp') {
-                const currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
-                const newIndex = (currentIndex - 8) % appListToRender.length + 1;
-                setSelectedApp(appListToRender[newIndex].appName.appName);
-            }
             else if(event.key === 'ArrowDown') {
-                const currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
-                const newIndex = (currentIndex + 8) % appListToRender.length - 2;
-                setSelectedApp(appListToRender[newIndex].appName.appName);
+                let currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
+                const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+                if (hoveredAppPrev) {
+                    hoveredAppPrev.classList.remove("app-icon-hovered");
+                }
+                currentIndex = currentIndex - 7;
+                if (currentIndex < 0) {
+                    currentIndex = ((currentIndex % appListToRender.length) + appListToRender.length) % appListToRender.length;
+                }
+                if (currentIndex >= 0) {
+                    setSelectedApp(appListToRender[currentIndex].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
+                }
+                else {
+                    setSelectedApp(appListToRender[appListToRender.length - 1].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (appListToRender.length - 1)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
+                }
+            }
+            else if(event.key === 'ArrowUp') {
+                let currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
+                const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+                if (hoveredAppPrev) {
+                    hoveredAppPrev.classList.remove("app-icon-hovered");
+                }
+                currentIndex = currentIndex + 7;
+                if (currentIndex >= appListToRender.length) {
+                    currentIndex = currentIndex % appListToRender.length;
+                }
+                if (currentIndex <= appListToRender.length - 1) {
+                    setSelectedApp(appListToRender[currentIndex].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
+                }
+                else {
+                    setSelectedApp(appListToRender[0].appName.appName);
+                    const hoveredApp = document.querySelector("#app-id-" + (0)) as HTMLElement;
+                    if (hoveredApp) {
+                        hoveredApp.classList.add("app-icon-hovered");
+                    }
+                }
             }
             else if (event.key === 'Escape') {
                 setSearchParam("");
@@ -178,6 +239,29 @@ const Launcher = () => {
         setSelectedApp("Start Typing To Search");
     }, []);
 
+    const handleMouseOverIcon = (appName: string) => {
+        let currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
+        const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+        if (hoveredAppPrev) {
+            hoveredAppPrev.classList.remove("app-icon-hovered");
+        }
+        setSelectedApp(appName);
+        currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName)
+        const hoveredApp = document.querySelector("#app-id-" + currentIndex) as HTMLElement;
+        if (hoveredApp) {
+            hoveredApp.classList.add("app-icon-hovered");
+        }
+    }
+    const handleMouseOutIcon = (appName: string) => {
+        let currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName);
+        const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
+        if (hoveredAppPrev) {
+            hoveredAppPrev.classList.remove("app-icon-hovered");
+        }
+        setSelectedApp("Start Typing To Search");
+    }
+
+
     return (
         <div className="page-view bg-body text-body">
             <div className="grid-row--vertical row-top row-center col-height-10">
@@ -197,8 +281,8 @@ const Launcher = () => {
                         <div
                             key={index}
                             className="padding--small"
-                            onMouseOver={() => setSelectedApp(app.appName.appName)}
-                            onMouseOut={() => setSelectedApp("Start Typing To Search")}
+                            onMouseOver={() => handleMouseOverIcon(app.appName.appName)}
+                            onMouseOut={() => handleMouseOutIcon(app.appName.appName)}
                             onClick={() => launchApp(app.appName.filePath)}
                         >
                             <img className="app-icon" id={"app-id-"+index} src={app.appName.iconPath} alt={app.appName.appName} />
