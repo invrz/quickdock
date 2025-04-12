@@ -76,5 +76,5 @@ class Listener:
         # Run the Electron-React UI
         self.webUiObj.resize(0, 0)
         self.webUiObj.hide()
-        self.webUiObj.load_html("<h1>hi</h1>")
+        self.webUiObj.load_url("http://localhost:8000/#loading")
         self.isWebUiObjVisible = False

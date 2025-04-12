@@ -23,7 +23,7 @@ def listenerLogic(webUIObj):
 
 def start_webview():
     api = API()
-    webUI = webview.create_window("QuickDock", "http://localhost:8000/", width=0, height=0, frameless=True, on_top=False, js_api=api)
+    webUI = webview.create_window("QuickDock", "http://localhost:8000/#loading", width=0, height=0, frameless=True, on_top=True, js_api=api)
     webview.start(listenerLogic, webUI)
 
 def create_tray_icon():

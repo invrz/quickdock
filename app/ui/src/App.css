@@ -99,3 +99,7 @@ input, select{
   padding: 4px 8px;
   width: 160px;
 }
+.progress-bar-container{
+  display: block;
+  width: 100%;
+}
