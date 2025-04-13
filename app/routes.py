@@ -24,6 +24,10 @@ def MakeHandlerClassWithBakedInDirectory(directory):
             self.getFileList()
         elif self.path == '/setFilesList':  # Define an endpoint to get apps list
             self.setFileList()
+        elif self.path == '/getPreferences':  # Define an endpoint to get apps list
+            self.getPreferences()
+        elif self.path == '/setPreferences':  # Define an endpoint to get apps list
+            self.setPreferences()
         else:
             # Handle other POST requests
             self.send_response(404)
@@ -59,6 +63,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         fileList.close()
 
         response_obj = {
+          "statusCode": 200,
           "status": "success",
           "message": "GET request received successfully",
           "data": fileListData  # Echo the received data
@@ -71,12 +76,13 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         self.wfile.write(response_json.encode('utf-8'))
       except:
         response_obj = {
+          "statusCode": 404,
           "status": "failed",
           "message": "GET request failed",
           "data": {"value": "unable to get file"}  # Echo the received data
         }
         response_json = json.dumps(response_obj)
-        self.send_response(200)
+        self.send_response(404)
         self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
         self.send_header('Content-Length', str(len(response_json)))  # Set content length
         self.end_headers()
@@ -94,6 +100,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
             json.dump(received_data, file)        
 
         response_obj = {
+          "statusCode": 200,
           "status": "success",
           "message": "SET request received successfully",
           "data": received_data  # Echo the received data
@@ -106,9 +113,29 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         self.wfile.write(response_json.encode('utf-8'))
       except:
         response_obj = {
+          "statusCode": 404,
           "status": "failed",
           "message": "GET request failed",
           "data": {"value": "unable to get file"}  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(404)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
+        
+    def getPreferences(self):
+      try:
+        fileList = open('./data/preferences.json', 'r')
+        fileListData = fileList.read()
+        fileList.close()
+
+        response_obj = {
+          "statusCode": 200,
+          "status": "success",
+          "message": "GET request received successfully",
+          "data": fileListData  # Echo the received data
         }
         response_json = json.dumps(response_obj)
         self.send_response(200)
@@ -116,7 +143,56 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         self.send_header('Content-Length', str(len(response_json)))  # Set content length
         self.end_headers()
         self.wfile.write(response_json.encode('utf-8'))
-        
+      except:
+        response_obj = {
+          "statusCode": 404,
+          "status": "failed",
+          "message": "GET request failed",
+          "data": {"value": "unable to get file"}  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(404)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
+
+    def setPreferences(self):
+      try:
+        # Handle launching an app based on the data in the request body
+        length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(length)
+        received_data = json.loads(post_data.decode('utf-8'))
+        print(received_data)
+        # Save the data to a file or database
+        with open('./data/preferences.json', 'w') as file:
+            json.dump(received_data, file)        
+
+        response_obj = {
+          "statusCode": 200,
+          "status": "success",
+          "message": "SET request received successfully",
+          "data": received_data  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
+      except:
+        response_obj = {
+          "statusCode": 404,
+          "status": "failed",
+          "message": "GET request failed",
+          "data": {"value": "unable to get file"}  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(404)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
          
 
   return Handler

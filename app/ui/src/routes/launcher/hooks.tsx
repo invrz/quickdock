@@ -18,6 +18,8 @@ export const useLauncherHooks = () => {
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [lightMode, setLightMode] = useState("false");
+    const [searchEngineUrl, setSearchEngineUrl] = useState("");
 
     const tips = [
         "Tip: You can change the default search engine from settings.",
@@ -121,5 +123,9 @@ export const useLauncherHooks = () => {
         handleMouseOutIcon,
         isLoaded,
         setIsLoaded,
+        lightMode,
+        setLightMode,
+        searchEngineUrl,
+        setSearchEngineUrl,
     };
 }

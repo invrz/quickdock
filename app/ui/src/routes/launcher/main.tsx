@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { useLauncherHooks } from "./hooks";
 
+interface PreferencesListInterface {
+  settingName: string;
+  settingValue: string;
+  settingDisplayName: string;
+}
+
 const Launcher = () => {
   const {
     searchParam,
@@ -24,9 +30,21 @@ const Launcher = () => {
     handleMouseOutIcon,
     isLoaded,
     setIsLoaded,
+    lightMode,
+    setLightMode,
+    searchEngineUrl,
+    setSearchEngineUrl,
   } = useLauncherHooks();
 
-  console.log(setAppList, setAppListToRender);
+  // To avoid setAppList and setAppListToRender being unused error
+  console.log(setAppList + ", " + setAppListToRender);
+
+  useEffect(() => {
+    // set prefers-color-scheme as light or dark based on settingValue
+    lightMode === "true"
+      ? document.querySelector("body")?.classList.add("light-theme")
+      : document.querySelector("body")?.classList.remove("light-theme");
+  }, [lightMode]);
 
   useEffect(() => {
     const tipInterval = setInterval(() => {
@@ -78,7 +96,7 @@ const Launcher = () => {
           }
         } else {
           window.open(
-            `https://www.google.com/search?q=${searchParam}`,
+            `${searchEngineUrl}${searchParam}`,
             "_blank"
           );
         }
@@ -238,7 +256,9 @@ const Launcher = () => {
     if (searchParam !== "") {
       const searchBar = document.getElementById("search-bar");
       if (searchBar) {
-        searchBar.style.color = "#ffebb4";
+        lightMode ===  "true"
+        ? searchBar.style.color = "#6700bb"
+        : searchBar.style.color = "#ffebb4"
       }
     } else {
       const searchBar = document.getElementById("search-bar");
@@ -248,7 +268,38 @@ const Launcher = () => {
     }
   }, [searchParam]);
 
+  const getAndSetPreferences = async () => {
+    const dummyBody = {
+      body: "nothing here",
+    };
+    const req = await fetch("http://localhost:8000/getPreferences", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dummyBody),
+    });
+    const res = await req.json();
+    if (res.statusCode !== 200) {
+      console.error("Error creating default preferences file");
+      return;
+    }
+    const parsedData = JSON.parse(res.data);
+    parsedData.forEach((setting: PreferencesListInterface) => {
+      if (setting.settingName === "lightmode") {
+        setLightMode(setting.settingValue);
+        setting.settingValue ===  "true"
+        ? document.querySelector("body")?.classList.add("light-theme")
+        : document.querySelector("body")?.classList.remove("light-theme");
+      }
+      if (setting.settingName === "defaultSearchEngine") {
+        setSearchEngineUrl(setting.settingValue);
+      }
+    });
+  };
+
   useEffect(() => {
+    getAndSetPreferences();
     if (appList.length === 0) {
       getAppList();
       setIsLoaded(true);
@@ -308,7 +359,6 @@ const Launcher = () => {
                     style={{
                       width: `${progress}%`,
                       height: "5px",
-                      backgroundColor: "#ffebb4",
                       color: "transparent",
                     }}
                   >

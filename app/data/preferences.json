@@ -1,5 +1,1 @@
-{
-    "saveHistoricalData": false,
-    "runAtStartup": false,
-    "checkForUpdates": false
-}
+[{"settingName": "lightmode", "settingValue": "true", "settingDisplayName": "Light Mode"}, {"settingName": "runAtStartup", "settingValue": "false", "settingDisplayName": "Run at Startup"}, {"settingName": "showNotifications", "settingValue": "true", "settingDisplayName": "Show Notifications"}, {"settingName": "autoUpdate", "settingValue": "true", "settingDisplayName": "Auto Update"}, {"settingName": "defaultSearchEngine", "settingValue": "https://search.yahoo.com/search?p=", "settingDisplayName": "Default Search Engine"}]

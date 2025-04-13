@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
@@ -13,8 +14,11 @@ def read_template_from_json(filename):
         return json.load(file)
     
 def read_preferences_from_json(filename):
-    with open(filename, 'r') as file:
-        return json.load(file)
+    if not os.path.exists(filename):
+        return create_default_preferences_file()
+    else:
+        with open(filename, 'r') as file:
+            return json.load(file)
 
 def listenerLogic(webUIObj):
     webUIObj.hide()
@@ -23,8 +27,43 @@ def listenerLogic(webUIObj):
 
 def start_webview():
     api = API()
-    webUI = webview.create_window("QuickDock", "http://localhost:8000/#loading", width=0, height=0, frameless=True, on_top=True, js_api=api)
+    webUI = webview.create_window("QuickDock", "http://localhost:8000/#launcher", width=0, height=0, frameless=True, on_top=True, js_api=api)
     webview.start(listenerLogic, webUI)
+
+def create_default_preferences_file():
+    
+    default_preferences = [
+        {
+            "settingName": "lightmode",
+            "settingValue": "false",
+            "settingDisplayName": "Light Mode"
+        },
+        {
+            "settingName": "runAtStartup",
+            "settingValue": "false",
+            "settingDisplayName": "Run at Startup"
+        },
+        {
+            "settingName": "showNotifications",
+            "settingValue": "true",
+            "settingDisplayName": "Show Notifications"
+        },
+        {
+            "settingName": "autoUpdate",
+            "settingValue": "true",
+            "settingDisplayName": "Auto Update"
+        },
+        {
+            "settingName": "defaultSearchEngine",
+            "settingValue": "https://google.com/search?q=",
+            "settingDisplayName": "Default Search Engine"
+        }
+    ]
+    with open('./data/preferences.json', 'w') as file:
+        json.dump(default_preferences, file)
+    
+    return default_preferences
+
 
 def create_tray_icon():
     currentPreferences = read_preferences_from_json('./data/preferences.json')
@@ -33,11 +72,13 @@ def create_tray_icon():
     icon_image = Image.open("./assets/icon.png")  # Replace "icon.png" with your icon file
 
     checkUnicode = '\u2713'
-    startupOptionText = 'Run at startup' if currentPreferences.get("runAtStartup") else 'Run at startup'
-    startupOptionState = currentPreferences.get("runAtStartup")
+    run_at_startup = next((item for item in currentPreferences if item["settingName"] == "runAtStartup"), {}).get("settingValue", "false") == "true"
+    startupOptionText = 'Run at startup' if run_at_startup else 'Run at startup'
+    startupOptionState = run_at_startup
 
-    historyOptionText = 'Save historical data' if currentPreferences.get("saveHistoricalData") else 'Save historical data'
-    historyOptionState = currentPreferences.get("saveHistoricalData")
+    autoUpdate = next((item for item in currentPreferences if item["settingName"] == "autoUpdate"), {}).get("settingValue", "false") == "true"
+    autoUpdateText = 'Auto Update' if autoUpdate else 'Auto Update'
+    autoUpdateState = autoUpdate
 
     def startupToggle(icon, item):
         menu_options.toggle_run_at_startup()
@@ -57,7 +98,7 @@ def create_tray_icon():
             MenuItem('Exit', menu_options.exit_app), 
             Menu.SEPARATOR, 
             MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
-            MenuItem(historyOptionText, historyToggle, checked=lambda MenuItem: historyOptionState)
+            MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState)
         )
     )
 
@@ -68,7 +109,8 @@ def start_application():
     preferences = read_preferences_from_json('./data/preferences.json')
 
     # Run preferences check
-    startup_options.run_at_startup(preferences.get("runAtStartup"))
+    run_at_startup = next((item for item in preferences if item["settingName"] == "runAtStartup"), {}).get("settingValue", "false") == "true"
+    startup_options.run_at_startup(run_at_startup)
 
     # Start the tray icon in a separate thread
     tray_thread = threading.Thread(target=create_tray_icon)

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SideNav from "../../common/sidenav/main";
 
 interface AppListItemInterface {
     appName: string;
@@ -10,11 +11,25 @@ interface AppListInterface {
     appName: AppListItemInterface;
 }
 
+interface PreferencesListInterface {
+  settingName: string;
+  settingValue: string;
+  settingDisplayName: string;
+}
+
 const Apps = () => {
     const [filePath, setFilePath] = useState('');
     const [iconPath, setIconPath] = useState('');
     const [appName, setAppName] = useState('');
     const [appList, setAppList] = useState<AppListInterface[]>([]);
+    const [lightMode, setLightMode] = useState("false");
+
+    useEffect(() => {
+        // set prefers-color-scheme as light or dark based on settingValue
+            lightMode === "true" 
+                ? document.querySelector("body")?.classList.add("light-theme")
+                : document.querySelector("body")?.classList.remove("light-theme")
+    }, [lightMode]);
 
     const getAppList = async () => {
         const dummyBody = {
@@ -164,29 +179,64 @@ const Apps = () => {
         }
     }
 
+    const getAndSetPreferences = async () => {
+        const dummyBody = {
+            "body": "nothing here"
+        }
+        const req = await fetch("http://localhost:8000/getPreferences", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dummyBody)
+        });
+        const res = await req.json();
+        if (res.statusCode !== 200) {
+            console.error("Error creating default preferences file");
+            return;
+        }
+        const parsedData = JSON.parse(res.data);
+        parsedData.forEach((setting: PreferencesListInterface) => {
+        if (setting.settingName === "lightmode") {
+            setLightMode(setting.settingValue);
+        }
+    });  
+    }
+
     useEffect(() => {
         getAppList();
+        getAndSetPreferences();
     }, [])
 
     return (
         <div className="page-view bg-body text-body">
             <div className="grid-row row-top row-center col-height-10">
 
-                <div className="col-width-15 padding--small col-height-auto">
+                <SideNav routeActive={"apps"} />
+
+                <div className="col-width-13 padding--small col-height-auto">
                     <h1 className="heading--h1">Apps List</h1>
                     <div className="form-wrapper grid-row padding--medium">
-                        <div className="col-width-8">
+                        <div className="col-width-12">
                             <ul className="list-view-vertical">
                                 <li>
                                     <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={()=>toggleWindow("windowviewid")}>Add New App</button>
                                 </li>
                                 {appList.map((app, index) => {
                                     return (
-                                        <li key={index} className="list-item">
-                                            <img className="img-icon border--none" src={`http://localhost:8000/${app.appName.iconPath}`} alt={app.appName.appName} />
-                                            <p>{app.appName.appName}</p>
-                                            <button className="primary-add-button bg-error border--none border--smooth bg-secondary-light text-secondary" onClick={() => removeAppFromList(app.appName.filePath)}>Remove</button>
-                                            <button className="primary-add-button bg-primary border--none border--smooth bg-secondary-light text-secondary" onClick={() => launchAppFromList(app.appName.filePath)}>Test Launch</button>
+                                        <li key={index} className="list-item grid-row row-middle row-center">
+                                            <div className="col-width-1">
+                                                <img className="img-icon border--none" src={`http://localhost:8000/${app.appName.iconPath}`} alt={app.appName.appName} />
+                                            </div>
+                                            <div className="col-width-10">
+                                                <p className="list-item-label">{app.appName.appName}</p>
+                                            </div>
+                                            <div className="col-width-2">
+                                                <button className="primary-add-button bg-error border--none border--smooth bg-secondary-light text-secondary" onClick={() => removeAppFromList(app.appName.filePath)}>Remove</button>
+                                            </div>
+                                            <div className="col-width-2">
+                                                <button className="primary-add-button bg-primary border--none border--smooth bg-secondary-light text-secondary" onClick={() => launchAppFromList(app.appName.filePath)}>Test Launch</button>
+                                            </div>
                                         </li>
                                     );
                                 })}
