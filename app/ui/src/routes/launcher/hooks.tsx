@@ -51,7 +51,8 @@ export const useLauncherHooks = () => {
         const res = await req.json();
         const parsedData = JSON.parse(res.data);
         setAppList(parsedData);
-        setAppListToRender(parsedData);
+        setAppListToRender(parsedData);    
+        setIsLoaded(true);
     };
 
     const launchApp = async (filePath: string) => {

@@ -29,7 +29,6 @@ const Launcher = () => {
     handleMouseOverIcon,
     handleMouseOutIcon,
     isLoaded,
-    setIsLoaded,
     lightMode,
     setLightMode,
     searchEngineUrl,
@@ -269,6 +268,22 @@ const Launcher = () => {
   }, [searchParam]);
 
   const getAndSetPreferences = async () => {
+    const preferences = localStorage.getItem("preferences");
+    if (preferences) {
+      const parsedData = JSON.parse(preferences);
+      parsedData.forEach((setting: PreferencesListInterface) => {
+        if (setting.settingName === "lightmode") {
+          setLightMode(setting.settingValue);
+          setting.settingValue ===  "true"
+          ? document.querySelector("body")?.classList.add("light-theme")
+          : document.querySelector("body")?.classList.remove("light-theme");
+        }
+        if (setting.settingName === "defaultSearchEngine") {
+          setSearchEngineUrl(setting.settingValue);
+        }
+      });
+      return;
+    }
     const dummyBody = {
       body: "nothing here",
     };
@@ -285,6 +300,7 @@ const Launcher = () => {
       return;
     }
     const parsedData = JSON.parse(res.data);
+    localStorage.setItem("preferences", res.data);
     parsedData.forEach((setting: PreferencesListInterface) => {
       if (setting.settingName === "lightmode") {
         setLightMode(setting.settingValue);
@@ -302,7 +318,6 @@ const Launcher = () => {
     getAndSetPreferences();
     if (appList.length === 0) {
       getAppList();
-      setIsLoaded(true);
     }
     setSelectedApp("Start Typing To Search");
   }, []);
@@ -319,7 +334,7 @@ const Launcher = () => {
                 className="col-width-15 search-bar bg-body border-body--dark border--smoother text-align--center"
                 placeholder={selectedApp}
                 value={searchParam}
-                onChange={(e) => setSearchParam(e.target.value)}
+                // onChange={(e) => {console.log(e)}}
                 id="search-bar"
               />
             </div>
@@ -344,10 +359,20 @@ const Launcher = () => {
               </div>
             ) : (
               <div className="grid-row--vertical col-width-15 row-middle row-center col-height-6">
-                <h1 className="text-align--center">
-                  No results found, press Enter
-                  <br /> to search the web...
-                </h1>
+                {
+                  appList.length !== 0 && searchParam.length === 0 ? (
+                    <h1 className="text-align--center">
+                      No results found, press Enter <br />
+                      to search the web...
+                    </h1>
+                  ) : (
+                    <h1 className="text-align--center">
+                      No quick launch apps found, <br />
+                      you can add them by opening "Control Center" <br />
+                      from the system tray/action center area.
+                    </h1>
+                  )
+                }
                 <br />
                 <br />
                 <label className="text-align--center">

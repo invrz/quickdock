@@ -180,6 +180,19 @@ const Apps = () => {
     }
 
     const getAndSetPreferences = async () => {
+        const preferences = localStorage.getItem("preferences");
+        if (preferences) {
+          const parsedData = JSON.parse(preferences);
+          parsedData.forEach((setting: PreferencesListInterface) => {
+            if (setting.settingName === "lightmode") {
+              setLightMode(setting.settingValue);
+              setting.settingValue ===  "true"
+              ? document.querySelector("body")?.classList.add("light-theme")
+              : document.querySelector("body")?.classList.remove("light-theme");
+            }
+          });
+          return;
+        }    
         const dummyBody = {
             "body": "nothing here"
         }
@@ -196,6 +209,7 @@ const Apps = () => {
             return;
         }
         const parsedData = JSON.parse(res.data);
+        localStorage.setItem("preferences", JSON.stringify(res.data));
         parsedData.forEach((setting: PreferencesListInterface) => {
         if (setting.settingName === "lightmode") {
             setLightMode(setting.settingValue);
@@ -204,8 +218,8 @@ const Apps = () => {
     }
 
     useEffect(() => {
-        getAppList();
         getAndSetPreferences();
+        getAppList();
     }, [])
 
     return (

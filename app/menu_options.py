@@ -1,5 +1,4 @@
 import json
-import sys
 import screeninfo
 import winshell
 import os
@@ -8,6 +7,7 @@ import subprocess
 import webview
 
 from jsapi import API
+from intializer import update_system_tray_state
 
 def write_new_preferences_to_json(newPreferences, filename):
     try:
@@ -26,25 +26,30 @@ def toggle_run_at_startup():
     # Change run at startup behavior boolean value to reverse
     filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
-    toggleTo = not preferences['runAtStartup']
-    preferences['runAtStartup'] = toggleTo
+    run_at_startup = next((item for item in preferences if item["settingName"] == "runAtStartup"), {}).get("settingValue", "false") == "true"
+    toggleTo = "true" if not run_at_startup else "false"
+    for item in preferences:
+        if item["settingName"] == "runAtStartup":
+            item["settingValue"] = toggleTo
+            break    
     write_new_preferences_to_json(preferences, filename)
     
-    # remove lock file on application exit
-    os.remove('./trigger.lock')
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+    update_system_tray_state()
 
-def toggle_historical_data():
+def toggle_auto_update():
     # Change save historical behavior boolean value to reverse
     filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
-    toggleTo = not preferences['saveHistoricalData']
-    preferences['saveHistoricalData'] = toggleTo
+    auto_update = next((item for item in preferences if item["settingName"] == "autoUpdate"), {}).get("settingValue", "false") == "true"
+    toggleTo = "true" if not auto_update else "false"
+    for item in preferences:
+        if item["settingName"] == "autoUpdate":
+            item["settingValue"] = toggleTo
+            break    
+
     write_new_preferences_to_json(preferences, filename)
-    
-    # remove lock file on application exit
-    os.remove('./trigger.lock')
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+    update_system_tray_state()
 
 def openHelperUi():
     # Run the Electron-React UI

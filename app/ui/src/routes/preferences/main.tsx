@@ -90,6 +90,7 @@ const Preferences = () => {
     }
     const parsedData = JSON.parse(res.data);
     setPreferences(parsedData);
+    localStorage.setItem("preferences", JSON.stringify(parsedData));
     parsedData.forEach((setting: PreferencesListInterface) => {
         if (setting.settingName === "defaultSearchEngine") {
             setSearchEngineUrl(setting.settingValue);
@@ -123,6 +124,7 @@ const Preferences = () => {
       newPreferences[index].settingValue = updatedValue.toString();
     }
     setPreferences(newPreferences);
+    localStorage.setItem("preferences", JSON.stringify(newPreferences));
     if(setting === "lightmode") {
         setLightMode(updatedValue.toString());
     }
