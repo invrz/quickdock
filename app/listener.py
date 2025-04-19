@@ -68,6 +68,8 @@ class Listener:
 
         # Show the WebView window
         self.webUiObj.show()
+        self.webUiObj.on_top
+        # Don't use on_top as method, it is an attribute, it makes the webview come in focus when it is shown.
 
         # Flag that the WebView is visible
         self.isWebUiObjVisible = True
