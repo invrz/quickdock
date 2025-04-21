@@ -12,9 +12,9 @@ interface AppListInterface {
 }
 
 interface PreferencesListInterface {
-  settingName: string;
-  settingValue: string;
-  settingDisplayName: string;
+    settingName: string;
+    settingValue: string;
+    settingDisplayName: string;
 }
 
 const Apps = () => {
@@ -26,9 +26,9 @@ const Apps = () => {
 
     useEffect(() => {
         // set prefers-color-scheme as light or dark based on settingValue
-            lightMode === "true" 
-                ? document.querySelector("body")?.classList.add("light-theme")
-                : document.querySelector("body")?.classList.remove("light-theme")
+        lightMode === "true"
+            ? document.querySelector("body")?.classList.add("light-theme")
+            : document.querySelector("body")?.classList.remove("light-theme")
     }, [lightMode]);
 
     const getAppList = async () => {
@@ -90,7 +90,7 @@ const Apps = () => {
             setIconPath('');
             setAppName('');
 
-            toggleWindow("windowviewid");
+            toggleWindow("windowviewforfile");
         }
         else {
             console.error("File/App or Icon Path is missing.")
@@ -166,33 +166,33 @@ const Apps = () => {
 
     const toggleWindow = (id: string) => {
         const windowstyle = document.getElementById(id);
-        if(windowstyle){
-            if(windowstyle.style.display == "flex"){
+        if (windowstyle) {
+            if (windowstyle.style.display == "flex") {
                 windowstyle.style.display = "none";
             }
-            else{
+            else {
                 windowstyle.style.display = "flex";
                 windowstyle.style.flexDirection = "column";
                 windowstyle.style.alignItems = "center";
                 windowstyle.style.justifyContent = "center";
-            }    
+            }
         }
     }
 
     const getAndSetPreferences = async () => {
         const preferences = localStorage.getItem("preferences");
         if (preferences) {
-          const parsedData = JSON.parse(preferences);
-          parsedData.forEach((setting: PreferencesListInterface) => {
-            if (setting.settingName === "lightmode") {
-              setLightMode(setting.settingValue);
-              setting.settingValue ===  "true"
-              ? document.querySelector("body")?.classList.add("light-theme")
-              : document.querySelector("body")?.classList.remove("light-theme");
-            }
-          });
-          return;
-        }    
+            const parsedData = JSON.parse(preferences);
+            parsedData.forEach((setting: PreferencesListInterface) => {
+                if (setting.settingName === "lightmode") {
+                    setLightMode(setting.settingValue);
+                    setting.settingValue === "true"
+                        ? document.querySelector("body")?.classList.add("light-theme")
+                        : document.querySelector("body")?.classList.remove("light-theme");
+                }
+            });
+            return;
+        }
         const dummyBody = {
             "body": "nothing here"
         }
@@ -211,10 +211,10 @@ const Apps = () => {
         const parsedData = JSON.parse(res.data);
         localStorage.setItem("preferences", JSON.stringify(res.data));
         parsedData.forEach((setting: PreferencesListInterface) => {
-        if (setting.settingName === "lightmode") {
-            setLightMode(setting.settingValue);
-        }
-    });  
+            if (setting.settingName === "lightmode") {
+                setLightMode(setting.settingValue);
+            }
+        });
     }
 
     useEffect(() => {
@@ -234,7 +234,8 @@ const Apps = () => {
                         <div className="col-width-12">
                             <ul className="list-view-vertical">
                                 <li>
-                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={()=>toggleWindow("windowviewid")}>Add New App</button>
+                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add New App</button>
+                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforfile")}>Add New File</button>
                                 </li>
                                 {appList.map((app, index) => {
                                     return (
@@ -260,33 +261,64 @@ const Apps = () => {
                 </div>
             </div>
 
-            <div className="window-view padding--large window-view--small" id="windowviewid">
+            <div className="window-view padding--large window-view--small" id="windowviewforfile">
                 <div className="window-title bg-muted-light text-muted">
-                    <span className="window-title-text">Add your favorite apps</span>
-                    <button className="window-title-action bg-error border--none border--smooth" onClick={()=>toggleWindow("windowviewid")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
+                    <span className="window-title-text">Add your favorite files</span>
+                    <button className="window-title-action bg-error border--none border--smooth" onClick={() => toggleWindow("windowviewforfile")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
                 </div>
                 <div className="window-content bg-body-dark text-body">
-                <h2 className="heading--h2">Add a new app or file to quicklaunch</h2>
-                <div className="form-wrapper grid-row row-bottom padding--small">
-                    <div className="col-width-7">
-                        {filePath && <h3 className="heading--h3">{appName}</h3>}
-                        <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any App Or File</button>
+                    <h2 className="heading--h2">Add a new file to quicklaunch</h2>
+                    <div className="form-wrapper grid-row row-bottom padding--small">
+                        <div className="col-width-7">
+                            {filePath && <h3 className="heading--h3">{appName}</h3>}
+                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any File To Quicklaunch</button>
+                        </div>
+                        <div className="col-width-1"></div>
+                        <div className="col-width-7">
+                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={`http://localhost:8000/${iconPath}`} alt={appName} /></div>}
+                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
+                        </div>
+                        <div className="col-width-7">
+                            <br /><br />
+                            <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch File</button>
+                        </div>
+                        <div className="col-width-1"></div>
+                        <div className="col-width-7">
+                            <br /><br />
+                            <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
+                        </div>
                     </div>
-                    <div className="col-width-1"></div>
-                    <div className="col-width-7">
-                        {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={`http://localhost:8000/${iconPath}`} alt={appName} /></div>}
-                        <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
-                    </div>
-                    <div className="col-width-7">
-                        <br /><br />
-                        <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch App</button>
-                    </div>
-                    <div className="col-width-1"></div>
-                    <div className="col-width-7">
-                        <br /><br />
-                        <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
-                    </div>
+
                 </div>
+            </div>
+
+            <div className="window-view padding--large window-view--small" id="windowviewforapp">
+                <div className="window-title bg-muted-light text-muted">
+                    <span className="window-title-text">Add your favorite apps</span>
+                    <button className="window-title-action bg-error border--none border--smooth" onClick={() => toggleWindow("windowviewforapp")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
+                </div>
+                <div className="window-content bg-body-dark text-body">
+                    <h2 className="heading--h2">Add a new app to quicklaunch</h2>
+                    <div className="form-wrapper grid-row row-bottom padding--small">
+                        <div className="col-width-7">
+                            {filePath && <h3 className="heading--h3">{appName}</h3>}
+                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any App To Quicklaunch</button>
+                        </div>
+                        <div className="col-width-1"></div>
+                        <div className="col-width-7">
+                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={`http://localhost:8000/${iconPath}`} alt={appName} /></div>}
+                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
+                        </div>
+                        <div className="col-width-7">
+                            <br /><br />
+                            <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch App</button>
+                        </div>
+                        <div className="col-width-1"></div>
+                        <div className="col-width-7">
+                            <br /><br />
+                            <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
+                        </div>
+                    </div>
 
                 </div>
             </div>

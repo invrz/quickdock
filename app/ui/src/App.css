@@ -25,7 +25,8 @@ input, select{
 
 .primary-add-button{
   padding: 8px 16px;
-  width: 100%;
+  width: 46%;
+  margin-right: 1%;
 }
 .img-icon{
   width: 90%;

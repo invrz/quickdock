@@ -13,3 +13,6 @@ QuickDock uses various Cargo packages to make different parts of the app work wh
 
 
 ## EOD
+git add .
+git commit -m "message"
+git push origin dev-fs
