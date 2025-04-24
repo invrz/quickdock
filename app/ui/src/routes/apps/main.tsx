@@ -22,6 +22,7 @@ const Apps = () => {
     const [iconPath, setIconPath] = useState('');
     const [appName, setAppName] = useState('');
     const [appList, setAppList] = useState<AppListInterface[]>([]);
+    const [installedAppsList, setInstalledAppsList] = useState<AppListItemInterface[]>([]);
     const [lightMode, setLightMode] = useState("false");
 
     useEffect(() => {
@@ -45,6 +46,22 @@ const Apps = () => {
         const res = await req.json();
         setAppList(JSON.parse(res.data));
         console.log(res.data);
+    }
+
+    const getInstalledAppList = async () => {
+        const dummyBody = {
+            "body": "nothing here"
+        }
+        const req = await fetch("http://localhost:8000/getInstalledApps", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dummyBody)
+        });
+        const res = await req.json();
+        setInstalledAppsList(res.data);
+        console.log(installedAppsList);
     }
 
     const removeAppFromList = async (appFilePath: string) => {
@@ -220,6 +237,7 @@ const Apps = () => {
     useEffect(() => {
         getAndSetPreferences();
         getAppList();
+        getInstalledAppList();
     }, [])
 
     return (
@@ -300,24 +318,43 @@ const Apps = () => {
                 <div className="window-content bg-body-dark text-body">
                     <h2 className="heading--h2">Add a new app to quicklaunch</h2>
                     <div className="form-wrapper grid-row row-bottom padding--small">
-                        <div className="col-width-7">
-                            {filePath && <h3 className="heading--h3">{appName}</h3>}
-                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any App To Quicklaunch</button>
-                        </div>
-                        <div className="col-width-1"></div>
-                        <div className="col-width-7">
-                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={`http://localhost:8000/${iconPath}`} alt={appName} /></div>}
-                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
-                        </div>
-                        <div className="col-width-7">
-                            <br /><br />
-                            <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch App</button>
-                        </div>
-                        <div className="col-width-1"></div>
-                        <div className="col-width-7">
-                            <br /><br />
-                            <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
-                        </div>
+                        <ul className="list-view-vertical">
+                            {installedAppsList.map((app, index) => (
+                                <li
+                                key={index}
+                                className="list-item grid-row row-middle row-left"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    // Avoid duplicates
+                                    const exists = appList.some(item => item.appName.filePath === app.filePath);
+                                    if (!exists) {
+                                    const filePath = app.filePath;
+                                    const iconPath = app.iconPath;
+                                    const appName = app.appName;
+                                    const newItem = {
+                                        appName: {appName, filePath, iconPath}
+                                    }
+                                    let newList = [...appList];
+                                    newList.push(newItem)
+                                    setAppList(newList);
+                                    toggleWindow('windowviewforapp');
+
+                                    // Send updated list to backend
+                                    fetch("http://localhost:8000/setFilesList", {
+                                        method: "POST",
+                                        headers: {
+                                        "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(newList)
+                                    }).then(res => res.json()).then(console.log).catch(console.error);
+                                    }
+                                }}
+                                >
+                                    <p className="list-item-label">{app.appName}</p>
+                                </li>
+                            ))}
+                        </ul>
+
                     </div>
 
                 </div>
