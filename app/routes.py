@@ -139,7 +139,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
           "statusCode": 200,
           "status": "success",
           "message": "GET request received successfully",
-          "data": iconBlob  # Echo the received data
+          "data": iconBlob  # Echo the received data 
         }
         response_json = json.dumps(response_obj)
         self.send_response(200)
