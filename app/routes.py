@@ -1,8 +1,10 @@
 # from http.server import SimpleHTTPRequestHandler 
 import http
 import json
+import base64
 
 from appList import get_uninstallable_apps
+from icon_extractor import extract_icon_as_blob
 
 def MakeHandlerClassWithBakedInDirectory(directory):
 
@@ -58,9 +60,9 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(length)
         received_data = json.loads(post_data.decode('utf-8'))
-        print(received_data)
+        # print(received_data)
         app_name = received_data.get('app_name')
-        print(app_name)
+        # print(app_name)
 
     def getFileList(self):
       try:
@@ -97,7 +99,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
     def getInstalledApps(self):
       try:
         fileList = get_uninstallable_apps()
-        print(fileList)
+        # print(fileList)
 
         response_obj = {
           "statusCode": 200,
@@ -125,21 +127,27 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         self.end_headers()
         self.wfile.write(response_json.encode('utf-8'))
 
-    def getInstalledAppsIcon(self):
+    def getInstalledAppIcon(self):
       try:
         length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(length)
         received_data = json.loads(post_data.decode('utf-8'))
-        print(received_data) # this ideally should be exe path
+        # print(received_data) # this ideally should be exe path received_data.exePath
         # get icon for this exe path and send it as response
+        # always store icons in ./assets/ folder with appName as the iconFileName
+        # for example icon for "7Zip" will be store as "./assets/7Zip.png"
+        # if icon for an app already exists, just return the path  IconBlob
+        # if icon doesn't exist, extract icon and save it in assets and return the path as IconBlob
 
-        iconBlob = 'lol'
+        iconBlob = extract_icon_as_blob(received_data.get('exePath'))
+
+        icon_base64 = base64.b64encode(iconBlob).decode('utf-8')
 
         response_obj = {
           "statusCode": 200,
           "status": "success",
           "message": "GET request received successfully",
-          "data": iconBlob  # Echo the received data 
+          "data": icon_base64  # Echo the received data 
         }
         response_json = json.dumps(response_obj)
         self.send_response(200)
@@ -167,7 +175,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(length)
         received_data = json.loads(post_data.decode('utf-8'))
-        print(received_data)
+        # print(received_data)
         # Save the data to a file or database
         with open('./data/applist.json', 'w') as file:
             json.dump(received_data, file)        
@@ -236,7 +244,7 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(length)
         received_data = json.loads(post_data.decode('utf-8'))
-        print(received_data)
+        # print(received_data)
         # Save the data to a file or database
         with open('./data/preferences.json', 'w') as file:
             json.dump(received_data, file)        

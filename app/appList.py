@@ -134,9 +134,9 @@ def main():
         return
 
     # Show the list
-    print("Installed Applications:")
-    for idx, app in enumerate(apps, start=1):
-        print(f"{idx}. {app['name']}")
+    # print("Installed Applications:")
+    # for idx, app in enumerate(apps, start=1):
+    #     print(f"{idx}. {app['name']}")
 
     # User selects
     try:

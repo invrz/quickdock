@@ -234,6 +234,51 @@ const Apps = () => {
         });
     }
 
+    const handleAddAppFromInstalledAppsList = async (app: AppListItemInterface) => {
+        {
+            // Avoid duplicates
+            const exists = appList.some(item => item.appName.filePath === app.filePath);
+            if (!exists) {
+            const filePath = app.filePath;
+            const appName = app.appName;
+            const iconPath = app.iconPath;
+
+            const getIconPathBody = {
+                "exePath": filePath,
+                "appName": appName,
+            }
+            const iconPathReq = await fetch("http://localhost:8000/getInstalledAppIcon", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(getIconPathBody)
+            });
+
+            const iconPathRes = await iconPathReq.json();
+            alert(iconPathRes)
+
+
+            const newItem = {
+                appName: {appName, filePath, iconPath}
+            }
+            let newList = [...appList];
+            newList.push(newItem)
+            setAppList(newList);
+            toggleWindow('windowviewforapp');
+
+            // Send updated list to backend
+            fetch("http://localhost:8000/setFilesList", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newList)
+            }).then(res => res.json()).then(console.log).catch(console.error);
+            }
+        }
+    }
+
     useEffect(() => {
         getAndSetPreferences();
         getAppList();
@@ -324,31 +369,7 @@ const Apps = () => {
                                 key={index}
                                 className="list-item grid-row row-middle row-left"
                                 style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                    // Avoid duplicates
-                                    const exists = appList.some(item => item.appName.filePath === app.filePath);
-                                    if (!exists) {
-                                    const filePath = app.filePath;
-                                    const iconPath = app.iconPath;
-                                    const appName = app.appName;
-                                    const newItem = {
-                                        appName: {appName, filePath, iconPath}
-                                    }
-                                    let newList = [...appList];
-                                    newList.push(newItem)
-                                    setAppList(newList);
-                                    toggleWindow('windowviewforapp');
-
-                                    // Send updated list to backend
-                                    fetch("http://localhost:8000/setFilesList", {
-                                        method: "POST",
-                                        headers: {
-                                        "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify(newList)
-                                    }).then(res => res.json()).then(console.log).catch(console.error);
-                                    }
-                                }}
+                                onClick={() => handleAddAppFromInstalledAppsList(app)}
                                 >
                                     <p className="list-item-label">{app.appName}</p>
                                 </li>
