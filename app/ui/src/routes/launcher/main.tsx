@@ -314,6 +314,34 @@ const Launcher = () => {
     });
   };
 
+  const handleIconPathForAppList = (getIconPath: string) => {
+    if(getIconPath.length < 100){
+        return `http://localhost:8000/${getIconPath}`;
+    }
+    else{
+        const base64Data = getIconPath;
+
+        // Convert base64 to Blob
+        const byteCharacters = atob(base64Data);
+        const byteArrays = [];
+
+        for (let i = 0; i < byteCharacters.length; i += 512) {
+            const slice = byteCharacters.slice(i, i + 512);
+            const byteNumbers = new Array(slice.length);
+            for (let j = 0; j < slice.length; j++) {
+            byteNumbers[j] = slice.charCodeAt(j);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, { type: "image/png" });
+
+        const blobUrl = URL.createObjectURL(blob);
+        return blobUrl;
+    }
+  }
+
   useEffect(() => {
     getAndSetPreferences();
     if (appList.length === 0) {
@@ -328,7 +356,7 @@ const Launcher = () => {
         <div className="page-view bg-body text-body">
           <div className="grid-row--vertical row-top row-center col-height-10 col-width-15">
             <br />
-            <div className="grid-row col-width-15">
+            <div className="grid-row col-width-15 col-height-1">
               <input
                 type="text"
                 className="col-width-15 search-bar bg-body border-body--dark border--smoother text-align--center"
@@ -339,7 +367,7 @@ const Launcher = () => {
               />
             </div>
             {appListToRender.length !== 0 ? (
-              <div className="grid-row col-width-15 row-middle row-center">
+              <div className="grid-row col-width-15 col-height-9 row-middle row-center">
                 {appListToRender.map((app, index) => (
                   <div
                     key={index}
@@ -351,7 +379,7 @@ const Launcher = () => {
                     <img
                       className="app-icon"
                       id={"app-id-" + index}
-                      src={app.appName.iconPath}
+                      src={handleIconPathForAppList(app.appName.iconPath)}
                       alt={app.appName.appName}
                     />
                   </div>

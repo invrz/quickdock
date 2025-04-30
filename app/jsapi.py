@@ -1,5 +1,7 @@
 import os
 import shutil
+from pynput.keyboard import Key, Controller
+import time
 import webview
 import sys
 import subprocess
@@ -56,6 +58,14 @@ class API:
                 subprocess.Popen(['open', file_path])
             else:
                 subprocess.Popen(['xdg-open', file_path])
+                
+                
+            keyboard = Controller()
+            keyboard.press(Key.ctrl)
+            keyboard.press(Key.space)
+            keyboard.release(Key.space)
+            keyboard.release(Key.ctrl)
+
             return True
         except Exception as e:
             print('Failed to launch application:', e)

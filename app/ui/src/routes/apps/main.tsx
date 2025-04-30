@@ -241,7 +241,7 @@ const Apps = () => {
             if (!exists) {
             const filePath = app.filePath;
             const appName = app.appName;
-            const iconPath = app.iconPath;
+            let iconPath = app.iconPath;
 
             const getIconPathBody = {
                 "exePath": filePath,
@@ -256,9 +256,8 @@ const Apps = () => {
             });
 
             const iconPathRes = await iconPathReq.json();
-            alert(iconPathRes)
-
-
+            iconPath = iconPathRes.data;
+            
             const newItem = {
                 appName: {appName, filePath, iconPath}
             }
@@ -276,6 +275,34 @@ const Apps = () => {
                 body: JSON.stringify(newList)
             }).then(res => res.json()).then(console.log).catch(console.error);
             }
+        }
+    }
+
+    const handleIconPathForAppList = (getIconPath: string) => {
+        if(getIconPath.length < 100){
+            return `http://localhost:8000/${getIconPath}`;
+        }
+        else{
+            const base64Data = getIconPath;
+
+            // Convert base64 to Blob
+            const byteCharacters = atob(base64Data);
+            const byteArrays = [];
+
+            for (let i = 0; i < byteCharacters.length; i += 512) {
+                const slice = byteCharacters.slice(i, i + 512);
+                const byteNumbers = new Array(slice.length);
+                for (let j = 0; j < slice.length; j++) {
+                byteNumbers[j] = slice.charCodeAt(j);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+
+            const blob = new Blob(byteArrays, { type: "image/png" });
+
+            const blobUrl = URL.createObjectURL(blob);
+            return blobUrl;
         }
     }
 
@@ -304,7 +331,7 @@ const Apps = () => {
                                     return (
                                         <li key={index} className="list-item grid-row row-middle row-center">
                                             <div className="col-width-1">
-                                                <img className="img-icon border--none" src={`http://localhost:8000/${app.appName.iconPath}`} alt={app.appName.appName} />
+                                                <img className="img-icon border--none" src={handleIconPathForAppList(app.appName.iconPath)} alt={app.appName.appName} />
                                             </div>
                                             <div className="col-width-10">
                                                 <p className="list-item-label">{app.appName.appName}</p>
@@ -338,7 +365,7 @@ const Apps = () => {
                         </div>
                         <div className="col-width-1"></div>
                         <div className="col-width-7">
-                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={`http://localhost:8000/${iconPath}`} alt={appName} /></div>}
+                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={handleIconPathForAppList(iconPath)} alt={appName} /></div>}
                             <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
                         </div>
                         <div className="col-width-7">
