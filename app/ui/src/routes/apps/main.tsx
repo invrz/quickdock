@@ -118,6 +118,21 @@ const Apps = () => {
         try {
             const selectedFile = await window.pywebview.api.open_file_dialog();
             if (selectedFile) {
+
+                // const getIconPathBody = {
+                //     "exePath": filePath,
+                //     "appName": appName,
+                // }
+                // const iconPathReq = await fetch("http://localhost:8000/getInstalledAppIcon", {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json"
+                //     },
+                //     body: JSON.stringify(getIconPathBody)
+                // });
+
+                // const iconPathRes = await iconPathReq.json();
+                // setIconPath(iconPathRes.data);
                 // Get the file name with extension
                 const appNameWithExtension = selectedFile.split('\\').pop()?.split('/').pop();
                 if (appNameWithExtension) {
@@ -275,6 +290,10 @@ const Apps = () => {
                 body: JSON.stringify(newList)
             }).then(res => res.json()).then(console.log).catch(console.error);
             }
+            else{
+                console.error("This app is already added to the list");
+                alert("This app is already added to the list");
+            }
         }
     }
 
@@ -318,18 +337,23 @@ const Apps = () => {
 
                 <SideNav routeActive={"apps"} />
 
-                <div className="col-width-13 padding--small col-height-auto">
+                <div className="col-width-13 padding--small col-height-auto page-view">
                     <h1 className="heading--h1">Apps List</h1>
                     <div className="form-wrapper grid-row padding--medium">
                         <div className="col-width-12">
                             <ul className="list-view-vertical">
-                                <li>
-                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add New App</button>
+                                <li className="grid-row row-middle row-left">
+                                    <div className="col-width-7">
+                                        <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add New App</button>
+                                    </div>
+                                    <div className="col-width-7">
                                     <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforfile")}>Add New File</button>
+                                    </div>
                                 </li>
+                                <br/>
                                 {appList.map((app, index) => {
                                     return (
-                                        <li key={index} className="list-item grid-row row-middle row-center">
+                                        <li key={index} className="list-item border--rounded">
                                             <div className="col-width-1">
                                                 <img className="img-icon border--none" src={handleIconPathForAppList(app.appName.iconPath)} alt={app.appName.appName} />
                                             </div>
@@ -356,53 +380,49 @@ const Apps = () => {
                     <span className="window-title-text">Add your favorite files</span>
                     <button className="window-title-action bg-error border--none border--smooth" onClick={() => toggleWindow("windowviewforfile")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
                 </div>
-                <div className="window-content bg-body-dark text-body">
+                <div className="window-content bg-body text-body">
                     <h2 className="heading--h2">Add a new file to quicklaunch</h2>
-                    <div className="form-wrapper grid-row row-bottom padding--small">
-                        <div className="col-width-7">
-                            {filePath && <h3 className="heading--h3">{appName}</h3>}
-                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any File To Quicklaunch</button>
-                        </div>
-                        <div className="col-width-1"></div>
-                        <div className="col-width-7">
+                    <div className="form-wrapper grid-row row-bottom row-center padding--small">
+                        <div className="col-width-12">
                             {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={handleIconPathForAppList(iconPath)} alt={appName} /></div>}
-                            <br /><button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>
+                            {filePath && <h3 className="heading--h3 text-align--center">{appName}</h3>}
                         </div>
-                        <div className="col-width-7">
-                            <br /><br />
+                        <div className="col-width-12">
+                            <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectFile}>Select Any File To Quicklaunch</button>
+                        </div>
+                        <div className="col-width-12">
+                            {filePath && <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={selectIcon}>Select Custom Icon</button>}
+                        </div>
+                        <div className="col-width-12">
                             <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch File</button>
                         </div>
-                        <div className="col-width-1"></div>
-                        <div className="col-width-7">
-                            <br /><br />
+                        <div className="col-width-12">
                             <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <div className="window-view padding--large window-view--small" id="windowviewforapp">
                 <div className="window-title bg-muted-light text-muted">
                     <span className="window-title-text">Add your favorite apps</span>
-                    <button className="window-title-action bg-error border--none border--smooth" onClick={() => toggleWindow("windowviewforapp")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
+                    <button className="window-title-action bg-error text-error border--none border--smooth" onClick={() => toggleWindow("windowviewforapp")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
                 </div>
-                <div className="window-content bg-body-dark text-body">
-                    <h2 className="heading--h2">Add a new app to quicklaunch</h2>
-                    <div className="form-wrapper grid-row row-bottom padding--small">
+                <div className="window-content bg-body text-body page-view">
+                    <h2 className="heading--h2 padding--small">Add a new app to quicklaunch</h2>
+                    <div className="form-wrapper grid-row row-bottom">
                         <ul className="list-view-vertical">
                             {installedAppsList.map((app, index) => (
                                 <li
                                 key={index}
-                                className="list-item grid-row row-middle row-left"
+                                className="installed-apps-list-item grid-row row-middle row-left border--smoother"
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => handleAddAppFromInstalledAppsList(app)}
                                 >
-                                    <p className="list-item-label">{app.appName}</p>
+                                    <p className="installed-apps-list-item-label">{app.appName}</p>
                                 </li>
                             ))}
                         </ul>
-
                     </div>
 
                 </div>
