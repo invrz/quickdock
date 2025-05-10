@@ -65,16 +65,16 @@ def create_tray_icon():
     autoUpdateState = autoUpdate
 
     def startupToggle(icon, item):
-        menu_options.toggle_run_at_startup()
+        menu_options.toggle_run_at_startup(icon)
         global startupOptionState
         startupOptionState = not item.checked
-        icon.update_menu()
+        # icon.update_menu()
 
     def historyToggle(icon, item):
-        menu_options.toggle_auto_update()
+        menu_options.toggle_auto_update(icon)
         global startupOptionState
         startupOptionState = not item.checked
-        icon.update_menu()
+        # icon.update_menu()
 
     # Create the tray icon
     icon = Icon("Invrz QuickDock", icon_image, "Invrz QuickDock", menu = Menu(
@@ -91,20 +91,39 @@ def create_tray_icon():
 def update_system_tray_state(icon):
     currentPreferences = read_preferences_from_json('./data/preferences.json')
 
-    run_at_startup = next((item for item in currentPreferences if item["settingName"] == "runAtStartup"), {}).get("settingValue", "false") == "true"
-    autoUpdate = next((item for item in currentPreferences if item["settingName"] == "autoUpdate"), {}).get("settingValue", "false") == "true"
+    # Define icon image and menu options
+    icon_image = Image.open("./assets/icon.png")  # Replace "icon.png" with your icon file
 
-    # Create a new menu dynamically
-    new_menu = Menu(
-        MenuItem('Open Control Center', menu_options.openHelperUi),
-        Menu.SEPARATOR,
-        MenuItem('Run at startup', lambda icon, item: None, checked=lambda item: run_at_startup),
-        MenuItem('Auto Update', lambda icon, item: None, checked=lambda item: autoUpdate),
-        Menu.SEPARATOR,
-        MenuItem('Exit', menu_options.exit_app),
-    )
+    checkUnicode = '\u2713'
+    run_at_startup = next((item for item in currentPreferences if item["settingName"] == "runAtStartup"), {}).get("settingValue", "false") == "true"
+    startupOptionText = 'Run at startup' if run_at_startup else 'Run at startup'
+    startupOptionState = run_at_startup
+
+    autoUpdate = next((item for item in currentPreferences if item["settingName"] == "autoUpdate"), {}).get("settingValue", "false") == "true"
+    autoUpdateText = 'Auto Update' if autoUpdate else 'Auto Update'
+    autoUpdateState = autoUpdate
+
+    def startupToggle(icon, item):
+        menu_options.toggle_run_at_startup(icon)
+        global startupOptionState
+        startupOptionState = not item.checked
+        icon.update_menu()
+
+    def historyToggle(icon, item):
+        menu_options.toggle_auto_update(icon)
+        global startupOptionState
+        startupOptionState = not item.checked
+        icon.update_menu()
+
 
     # Stop and restart the icon with the updated menu
-    icon.visible = False
-    icon.menu = new_menu
-    icon.visible = True
+    icon.menu =  Menu(
+            MenuItem('Open Control Center', menu_options.openHelperUi), 
+            Menu.SEPARATOR, 
+            MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
+            MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
+            Menu.SEPARATOR, 
+            MenuItem('Exit', menu_options.exit_app), 
+        )
+    icon.update_menu()
+

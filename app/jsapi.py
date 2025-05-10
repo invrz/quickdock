@@ -50,7 +50,7 @@ class API:
         else:
             return None
 
-    def launch_application(self, file_path):
+    def launch_application(self, file_path, source):
         try:
             if sys.platform.startswith('win'):
                 subprocess.Popen([file_path], shell=True)
@@ -59,12 +59,12 @@ class API:
             else:
                 subprocess.Popen(['xdg-open', file_path])
                 
-                
-            keyboard = Controller()
-            keyboard.press(Key.ctrl)
-            keyboard.press(Key.space)
-            keyboard.release(Key.space)
-            keyboard.release(Key.ctrl)
+            if(source == "launcher"):
+                keyboard = Controller()
+                keyboard.press(Key.ctrl)
+                keyboard.press(Key.space)
+                keyboard.release(Key.space)
+                keyboard.release(Key.ctrl)
 
             return True
         except Exception as e:

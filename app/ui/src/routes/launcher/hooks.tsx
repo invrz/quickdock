@@ -61,7 +61,7 @@ export const useLauncherHooks = () => {
             return;
         }
         try {
-            const result = await window.pywebview.api.launch_application(filePath);
+            const result = await window.pywebview.api.launch_application(filePath, "launcher");
             if (result) {
                 console.log('Application launched successfully');
             } else {

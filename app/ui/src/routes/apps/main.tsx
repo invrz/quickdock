@@ -168,7 +168,7 @@ const Apps = () => {
             return;
         }
         try {
-            const result = await window.pywebview.api.launch_application(filePath);
+            const result = await window.pywebview.api.launch_application(filePath, "control center");
             if (result) {
                 console.log('Application launched successfully');
             } else {
@@ -185,7 +185,7 @@ const Apps = () => {
             return;
         }
         try {
-            const result = await window.pywebview.api.launch_application(appFilePath);
+            const result = await window.pywebview.api.launch_application(appFilePath, "control center");
             if (result) {
                 console.log('Application launched successfully');
             } else {

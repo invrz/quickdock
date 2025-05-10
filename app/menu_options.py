@@ -1,6 +1,7 @@
 import json
 import screeninfo
 import winshell
+import sys
 import os
 import subprocess
 
@@ -22,7 +23,7 @@ def read_current_preferences_from_json(filename):
     with open(filename, 'r') as file:
         return json.load(file)
 
-def toggle_run_at_startup():
+def toggle_run_at_startup(icon):
     # Change run at startup behavior boolean value to reverse
     filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
@@ -33,10 +34,11 @@ def toggle_run_at_startup():
             item["settingValue"] = toggleTo
             break    
     write_new_preferences_to_json(preferences, filename)
-    
-    update_system_tray_state()
 
-def toggle_auto_update():
+    update_system_tray_state(icon)
+    
+
+def toggle_auto_update(icon):
     # Change save historical behavior boolean value to reverse
     filename = './data/preferences.json'
     preferences = read_current_preferences_from_json(filename)
@@ -49,7 +51,8 @@ def toggle_auto_update():
 
     write_new_preferences_to_json(preferences, filename)
 
-    update_system_tray_state()
+    update_system_tray_state(icon)
+
 
 def openHelperUi():
     # Run the Electron-React UI
