@@ -83,21 +83,27 @@ export const useLauncherHooks = () => {
     const handleMouseOverIcon = (appName: string) => {
         let currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
         const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
-        if (hoveredAppPrev) {
-            hoveredAppPrev.classList.remove("app-icon-hovered");
+        if (hoveredAppPrev) {        
+            lightMode ===  "true"
+            ? hoveredAppPrev.classList.remove("app-icon-hovered")
+            : hoveredAppPrev.classList.remove("app-icon-hovered--dark");
         }
         setSelectedApp(appName);
         currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName)
         const hoveredApp = document.querySelector("#app-id-" + currentIndex) as HTMLElement;
-        if (hoveredApp) {
-            hoveredApp.classList.add("app-icon-hovered");
+        if (hoveredApp) {        
+            lightMode ===  "true"
+            ? hoveredApp.classList.add("app-icon-hovered")
+            : hoveredApp.classList.add("app-icon-hovered--dark");
         }
     }
     const handleMouseOutIcon = (appName: string) => {
         let currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName);
         const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
-        if (hoveredAppPrev) {
-            hoveredAppPrev.classList.remove("app-icon-hovered");
+        if (hoveredAppPrev) {        
+            lightMode ===  "true"
+            ? hoveredAppPrev.classList.remove("app-icon-hovered")
+            : hoveredAppPrev.classList.remove("app-icon-hovered--dark");
         }
         setSelectedApp("Start Typing To Search");
     }

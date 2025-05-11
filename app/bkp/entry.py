@@ -20,7 +20,7 @@ def start_http_server():
     httpd.serve_forever()
 
 def main():
-    logFileName = "./logs/log_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+    logFileName = "./logs/log_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
     log = open(logFileName, 'a')
     try:
         # open log file in append mode

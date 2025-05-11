@@ -1,15 +1,14 @@
-import time
+# counter.py
+
 import keyboard
-from pynput.keyboard import Key, Controller
 import screeninfo
 
-from webview_manager import get_webview_instance
 import menu_options
 
 class Listener:
-    def __init__(self):
+    def __init__(self, currWebUiObj):
         self.key_pressed_list = []
-        self.webUiObj = get_webview_instance('launcher')
+        self.webUiObj = currWebUiObj
         self.isWebUiObjVisible = False
 
     def start_listening(self):
@@ -69,9 +68,8 @@ class Listener:
 
         # Show the WebView window
         self.webUiObj.show()
-
+        self.webUiObj.on_top
         # Don't use on_top as method, it is an attribute, it makes the webview come in focus when it is shown.
-        self.webUiObj.on_top = True
 
         # Flag that the WebView is visible
         self.isWebUiObjVisible = True
