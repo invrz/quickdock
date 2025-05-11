@@ -57,8 +57,8 @@ input, select{
   transition: 200ms;
   font-size: 1rem;
 }
-.search-bar:focus{
-  border-color: var(--highlight);
+.search-bar-focus{
+  border-color: inherit;
   color: var(--highlight);
 }
 .search-bar:active{

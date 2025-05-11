@@ -2,6 +2,7 @@ import time
 import keyboard
 from pynput.keyboard import Key, Controller
 import screeninfo
+import webview
 
 from webview_manager import get_webview_instance
 import menu_options

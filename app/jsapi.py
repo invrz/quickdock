@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 from pynput.keyboard import Key, Controller
 import webview
 import sys
@@ -57,13 +58,18 @@ class API:
                 subprocess.Popen(['open', file_path])
             else:
                 subprocess.Popen(['xdg-open', file_path])
-                
+            
             if(source == "launcher"):
                 keyboard = Controller()
                 keyboard.press(Key.ctrl)
                 keyboard.press(Key.space)
                 keyboard.release(Key.space)
                 keyboard.release(Key.ctrl)
+
+                # webUiObj = webview.windows[0]
+                # webUiObj.resize(0, 0)
+                # webUiObj.hide()
+                # webUiObj.load_url("http://localhost:8000/#loading")
 
             return True
         except Exception as e:

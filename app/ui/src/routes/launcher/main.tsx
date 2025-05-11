@@ -33,6 +33,8 @@ const Launcher = () => {
     setLightMode,
     searchEngineUrl,
     setSearchEngineUrl,
+    searchBarInFocus,
+    setSearchBarInFocus,
   } = useLauncherHooks();
 
   // To avoid setAppList and setAppListToRender being unused error
@@ -82,7 +84,7 @@ const Launcher = () => {
         );
       } else if (event.key === "Enter") {
         if (appListToRender.length > 0) {
-          if (selectedApp !== "Start Typing To Search") {
+          if (selectedApp !== "Type here to search your deck or the web") {
             // get path of selected app
             const currentIndex = appListToRender.findIndex(
               (app) => app.appName.appName === selectedApp
@@ -98,6 +100,7 @@ const Launcher = () => {
             `${searchEngineUrl}${searchParam}`,
             "_blank"
           );
+          launchApp("UserDidAWebSearch");
         }
       } else if (event.key === "Backspace" || event.key === "Delete") {
         setSearchParam((prev) => prev.slice(0, -1));
@@ -237,7 +240,7 @@ const Launcher = () => {
         }
       } else if (event.key === "Escape") {
         setSearchParam("");
-        setSelectedApp("Start Typing To Search");
+        setSelectedApp("Type here to search your deck or the web");
         const searchBar = document.getElementById("search-bar");
         if (searchBar) {
           searchBar.style.color = "#000000";
@@ -252,12 +255,12 @@ const Launcher = () => {
   }, [appListToRender, searchParam, selectedApp]);
 
   useEffect(() => {
-    if (searchParam !== "") {
+    if (searchParam !== "" || searchBarInFocus) {
       const searchBar = document.getElementById("search-bar");
       if (searchBar) {
-        lightMode ===  "true"
-        ? searchBar.style.color = "#6700bb"
-        : searchBar.style.color = "#ffebb4"
+        lightMode === "true"
+          ? searchBar.style.color = "#6700bb"
+          : searchBar.style.color = "#ffebb4"
       }
     } else {
       const searchBar = document.getElementById("search-bar");
@@ -265,7 +268,7 @@ const Launcher = () => {
         searchBar.style.color = "#000000";
       }
     }
-  }, [searchParam]);
+  }, [searchParam, searchBarInFocus]);
 
   const getAndSetPreferences = async () => {
     const preferences = localStorage.getItem("preferences");
@@ -274,9 +277,9 @@ const Launcher = () => {
       parsedData.forEach((setting: PreferencesListInterface) => {
         if (setting.settingName === "lightmode") {
           setLightMode(setting.settingValue);
-          setting.settingValue ===  "true"
-          ? document.querySelector("body")?.classList.add("light-theme")
-          : document.querySelector("body")?.classList.remove("light-theme");
+          setting.settingValue === "true"
+            ? document.querySelector("body")?.classList.add("light-theme")
+            : document.querySelector("body")?.classList.remove("light-theme");
         }
         if (setting.settingName === "defaultSearchEngine") {
           setSearchEngineUrl(setting.settingValue);
@@ -304,9 +307,9 @@ const Launcher = () => {
     parsedData.forEach((setting: PreferencesListInterface) => {
       if (setting.settingName === "lightmode") {
         setLightMode(setting.settingValue);
-        setting.settingValue ===  "true"
-        ? document.querySelector("body")?.classList.add("light-theme")
-        : document.querySelector("body")?.classList.remove("light-theme");
+        setting.settingValue === "true"
+          ? document.querySelector("body")?.classList.add("light-theme")
+          : document.querySelector("body")?.classList.remove("light-theme");
       }
       if (setting.settingName === "defaultSearchEngine") {
         setSearchEngineUrl(setting.settingValue);
@@ -315,30 +318,30 @@ const Launcher = () => {
   };
 
   const handleIconPathForAppList = (getIconPath: string) => {
-    if(getIconPath.length < 100){
-        return `http://localhost:8000/${getIconPath}`;
+    if (getIconPath.length < 100) {
+      return `http://localhost:8000/${getIconPath}`;
     }
-    else{
-        const base64Data = getIconPath;
+    else {
+      const base64Data = getIconPath;
 
-        // Convert base64 to Blob
-        const byteCharacters = atob(base64Data);
-        const byteArrays = [];
+      // Convert base64 to Blob
+      const byteCharacters = atob(base64Data);
+      const byteArrays = [];
 
-        for (let i = 0; i < byteCharacters.length; i += 512) {
-            const slice = byteCharacters.slice(i, i + 512);
-            const byteNumbers = new Array(slice.length);
-            for (let j = 0; j < slice.length; j++) {
-            byteNumbers[j] = slice.charCodeAt(j);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
+      for (let i = 0; i < byteCharacters.length; i += 512) {
+        const slice = byteCharacters.slice(i, i + 512);
+        const byteNumbers = new Array(slice.length);
+        for (let j = 0; j < slice.length; j++) {
+          byteNumbers[j] = slice.charCodeAt(j);
         }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
 
-        const blob = new Blob(byteArrays, { type: "image/png" });
+      const blob = new Blob(byteArrays, { type: "image/png" });
 
-        const blobUrl = URL.createObjectURL(blob);
-        return blobUrl;
+      const blobUrl = URL.createObjectURL(blob);
+      return blobUrl;
     }
   }
 
@@ -347,46 +350,50 @@ const Launcher = () => {
     if (appList.length === 0) {
       getAppList();
     }
-    setSelectedApp("Start Typing To Search");
+    setSelectedApp("Type here to search your deck or the web");
   }, []);
 
   return (
     <>
       {isLoaded ? (
         <div className="page-view bg-body text-body">
-          <div className="grid-row--vertical row-top row-center col-height-10 col-width-15">
-            <br />
-            <div className="grid-row col-width-15 col-height-1">
-              <input
-                type="text"
-                className="col-width-15 search-bar bg-body border-body--dark border--smoother text-align--center"
-                placeholder={selectedApp}
-                value={searchParam}
-                // onChange={(e) => {console.log(e)}}
-                id="search-bar"
-              />
+          <div className="grid-row col-width-15 col-height-10 row-middle row-center padding--small">
+            <div className="grid-row col-width-15 col-height-2 row-middle row-center">
+              <div className="grid-row col-height-1 col-width-15 row-middle row-center">
+                <input
+                  type="text"
+                  className="search-bar col-width-12 bg-body border-body--dark border--smoother text-align--center"
+                  placeholder={selectedApp}
+                  value={searchParam}
+                  onFocus={() => { setSearchBarInFocus(true); }}
+                  onBlur={() => { setSearchBarInFocus(false); }}
+                  // autoFocus={true}
+                  // onChange={(e) => {setSearchParam(e.target.value);}}
+                  id="search-bar"
+                />
+              </div>
             </div>
-            {appListToRender.length !== 0 ? (
-              <div className="grid-row col-width-15 col-height-9 row-middle row-center">
-                {appListToRender.map((app, index) => (
-                  <div
-                    key={index}
-                    className="padding--small"
-                    onMouseOver={() => handleMouseOverIcon(app.appName.appName)}
-                    onMouseOut={() => handleMouseOutIcon(app.appName.appName)}
-                    onClick={() => launchApp(app.appName.filePath)}
-                  >
-                    <img
-                      className="app-icon"
-                      id={"app-id-" + index}
-                      src={handleIconPathForAppList(app.appName.iconPath)}
-                      alt={app.appName.appName}
-                    />
-                  </div>
-                ))}
+          {appListToRender.length !== 0 ? (
+            <div className="grid-row col-width-15 col-height-8 row-middle row-center">
+              {appListToRender.map((app, index) => (
+                <div
+                  key={index}
+                  className="padding--small"
+                  onMouseOver={() => handleMouseOverIcon(app.appName.appName)}
+                  onMouseOut={() => handleMouseOutIcon(app.appName.appName)}
+                  onClick={() => launchApp(app.appName.filePath)}
+                >
+                  <img
+                    className="app-icon"
+                    id={"app-id-" + index}
+                    src={handleIconPathForAppList(app.appName.iconPath)}
+                    alt={app.appName.appName}
+                  />
+                </div>
+              ))}
               </div>
             ) : (
-              <div className="grid-row--vertical col-width-15 row-middle row-center col-height-6">
+              <div className="grid-row--vertical col-width-15 col-height-8 row-middle row-center">
                 {
                   appList.length !== 0 && searchParam.length === 0 ? (
                     <h1 className="text-align--center">

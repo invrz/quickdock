@@ -20,6 +20,7 @@ export const useLauncherHooks = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [lightMode, setLightMode] = useState("false");
     const [searchEngineUrl, setSearchEngineUrl] = useState("");
+    const [searchBarInFocus, setSearchBarInFocus] = useState(false);
 
     const tips = [
         "Tip: You can change the default search engine from settings.",
@@ -105,7 +106,7 @@ export const useLauncherHooks = () => {
             ? hoveredAppPrev.classList.remove("app-icon-hovered")
             : hoveredAppPrev.classList.remove("app-icon-hovered--dark");
         }
-        setSelectedApp("Start Typing To Search");
+        setSelectedApp("Type here to search your deck or the web");
     }
 
     return {
@@ -134,5 +135,7 @@ export const useLauncherHooks = () => {
         setLightMode,
         searchEngineUrl,
         setSearchEngineUrl,
+        searchBarInFocus,
+        setSearchBarInFocus,
     };
 }
