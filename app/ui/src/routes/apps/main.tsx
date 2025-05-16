@@ -25,6 +25,8 @@ const Apps = () => {
     const [installedAppsList, setInstalledAppsList] = useState<AppListItemInterface[]>([]);
     const [lightMode, setLightMode] = useState("false");
 
+    const SINGLE_INSTANCE_PORT = 23897
+
     useEffect(() => {
         // set prefers-color-scheme as light or dark based on settingValue
         lightMode === "true"
@@ -36,7 +38,7 @@ const Apps = () => {
         const dummyBody = {
             "body": "nothing here"
         }
-        const req = await fetch("http://localhost:8000/getFilesList", {
+        const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getFilesList`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -52,7 +54,7 @@ const Apps = () => {
         const dummyBody = {
             "body": "nothing here"
         }
-        const req = await fetch("http://localhost:8000/getInstalledApps", {
+        const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getInstalledApps`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -69,7 +71,7 @@ const Apps = () => {
             const newFileList = appList.filter((app) => app.appName.filePath !== appFilePath);
             setAppList(newFileList);
             // Send the new app list to the backend
-            const req = await fetch("http://localhost:8000/setFilesList", {
+            const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/setFilesList`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -93,7 +95,7 @@ const Apps = () => {
             const newFileList = [...appList, fileListObj];
             setAppList(newFileList);
             // Send the new app list to the backend
-            const req = await fetch("http://localhost:8000/setFilesList", {
+            const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/setFilesList`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -228,7 +230,7 @@ const Apps = () => {
         const dummyBody = {
             "body": "nothing here"
         }
-        const req = await fetch("http://localhost:8000/getPreferences", {
+        const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getPreferences`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -262,7 +264,7 @@ const Apps = () => {
                 "exePath": filePath,
                 "appName": appName,
             }
-            const iconPathReq = await fetch("http://localhost:8000/getInstalledAppIcon", {
+            const iconPathReq = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getInstalledAppIcon`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -282,7 +284,7 @@ const Apps = () => {
             toggleWindow('windowviewforapp');
 
             // Send updated list to backend
-            fetch("http://localhost:8000/setFilesList", {
+            fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/setFilesList`, {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json"
@@ -299,7 +301,7 @@ const Apps = () => {
 
     const handleIconPathForAppList = (getIconPath: string) => {
         if(getIconPath.length < 100){
-            return `http://localhost:8000/${getIconPath}`;
+            return `http://localhost:${SINGLE_INSTANCE_PORT}/${getIconPath}`;
         }
         else{
             const base64Data = getIconPath;

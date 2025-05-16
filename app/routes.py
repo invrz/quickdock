@@ -3,8 +3,13 @@ import http
 import json
 import base64
 
+import screeninfo
+
 from appList import get_uninstallable_apps
 from icon_extractor import extract_icon_as_blob
+from webview_manager import get_webview_instance
+
+SINGLE_INSTANCE_PORT = 23897
 
 def MakeHandlerClassWithBakedInDirectory(directory):
 
@@ -24,6 +29,8 @@ def MakeHandlerClassWithBakedInDirectory(directory):
             self.handle_test()
         elif self.path == '/launch_app':  # Define an endpoint to launch apps
             self.handle_launch_app()
+        if self.path == '/show_helper_ui':  # Define an endpoint to launch apps
+            self.getShowHelperUi()
         elif self.path == '/getFilesList':  # Define an endpoint to get apps list
             self.getFileList()
         elif self.path == '/setFilesList':  # Define an endpoint to get apps list
@@ -43,6 +50,37 @@ def MakeHandlerClassWithBakedInDirectory(directory):
 
     def handle_test(self):
        post_data = "test"
+       response_obj = {
+         "status": "success",
+         "message": "POST request received successfully",
+         "data": post_data  # Echo the received data
+       }
+       response_json = json.dumps(response_obj)
+       self.send_response(200)
+       self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+       self.send_header('Content-Length', str(len(response_json)))  # Set content length
+       self.end_headers()
+       self.wfile.write(response_json.encode('utf-8'))
+
+    def getShowHelperUi(self):
+       screen = screeninfo.get_monitors()[0]
+       screen_width = screen.width
+       screen_height = screen.height
+
+       window_width = int(screen_width * 0.8)
+       window_height = int(screen_height * 0.8)
+
+       # Calculate the position to center the window
+       window_x = (screen_width - window_width) // 2
+       window_y = (screen_height - window_height) // 2
+        
+       helperUiObj = get_webview_instance('helper')
+       helperUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#apps")
+       helperUiObj.resize(window_width, window_height)
+       helperUiObj.move(window_x, window_y)
+       helperUiObj.show()
+       
+       post_data = "opening helper ui"
        response_obj = {
          "status": "success",
          "message": "POST request received successfully",

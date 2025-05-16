@@ -77,11 +77,11 @@ def create_tray_icon():
         # icon.update_menu()
 
     # Create the tray icon
-    icon = Icon("Invrz QuickDock", icon_image, "Invrz QuickDock", menu = Menu(
+    icon = Icon("GhostDeck", icon_image, "GhostDeck", menu = Menu(
             MenuItem('Open Control Center', menu_options.openHelperUi), 
             Menu.SEPARATOR, 
             MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
-            MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
+            # MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
             Menu.SEPARATOR, 
             MenuItem('Exit', menu_options.exit_app), 
         )

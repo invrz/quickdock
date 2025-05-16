@@ -22,6 +22,8 @@ export const useLauncherHooks = () => {
     const [searchEngineUrl, setSearchEngineUrl] = useState("");
     const [searchBarInFocus, setSearchBarInFocus] = useState(false);
 
+    const SINGLE_INSTANCE_PORT = 23897
+
     const tips = [
         "Tip: You can change the default search engine from settings.",
         "Tip: You can press Escape to clear the search bar.",
@@ -44,7 +46,7 @@ export const useLauncherHooks = () => {
 
     const getAppList = async () => {
         const dummyBody = { "body": "nothing here" };
-        const req = await fetch("http://localhost:8000/getFilesList", {
+        const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getFilesList`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dummyBody)

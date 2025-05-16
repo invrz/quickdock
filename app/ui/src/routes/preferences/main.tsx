@@ -12,6 +12,8 @@ const Preferences = () => {
     const [searchEngineUrl, setSearchEngineUrl] = useState("");
     const [lightMode, setLightMode] = useState("false");
 
+    const SINGLE_INSTANCE_PORT = 23897
+
   const searchEngineOptions = [
     { Custom: "" },
     { Google: "https://google.com/search?q=" },
@@ -62,7 +64,7 @@ const Preferences = () => {
     const dummyBody = {
       body: "nothing here",
     };
-    const req = await fetch("http://localhost:8000/getPreferences", {
+    const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getPreferences`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +74,7 @@ const Preferences = () => {
     const res = await req.json();
     if (res.statusCode !== 200) {
       // preference file not found, create a new one using default values
-      const req = await fetch("http://localhost:8000/setPreferences", {
+      const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/setPreferences`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +132,7 @@ const Preferences = () => {
     }
 
     // Send the new app list to the backend
-    const req = await fetch("http://localhost:8000/setPreferences", {
+    const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/setPreferences`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

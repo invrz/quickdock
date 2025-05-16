@@ -37,6 +37,8 @@ const Launcher = () => {
     setSearchBarInFocus,
   } = useLauncherHooks();
 
+    const SINGLE_INSTANCE_PORT = 23897
+
   // To avoid setAppList and setAppListToRender being unused error
   console.log(setAppList + ", " + setAppListToRender);
 
@@ -290,7 +292,7 @@ const Launcher = () => {
     const dummyBody = {
       body: "nothing here",
     };
-    const req = await fetch("http://localhost:8000/getPreferences", {
+    const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/getPreferences`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -319,7 +321,7 @@ const Launcher = () => {
 
   const handleIconPathForAppList = (getIconPath: string) => {
     if (getIconPath.length < 100) {
-      return `http://localhost:8000/${getIconPath}`;
+      return `http://localhost:${SINGLE_INSTANCE_PORT}/${getIconPath}`;
     }
     else {
       const base64Data = getIconPath;

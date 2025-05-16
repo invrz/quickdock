@@ -1,16 +1,7 @@
 from pystray import Icon, Menu, MenuItem
 from PIL import Image
 import menu_options
-from webview_manager import get_webview_instance
 from preferences import load_preferences
-
-def open_helper_ui():
-    """
-    Show the helper UI WebView window.
-    """
-    helper_ui = get_webview_instance('helper')
-    if helper_ui:
-        helper_ui.show()
 
 def create_tray_icon():
     currentPreferences = load_preferences('./data/preferences.json')
@@ -40,11 +31,11 @@ def create_tray_icon():
         # icon.update_menu()
 
     # Create the tray icon
-    icon = Icon("Invrz QuickDock", icon_image, "Invrz QuickDock", menu = Menu(
+    icon = Icon("GhostDeck", icon_image, "GhostDeck", menu = Menu(
             MenuItem('Open Control Center', menu_options.openHelperUi), 
             Menu.SEPARATOR, 
             MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
-            MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
+            # MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
             Menu.SEPARATOR, 
             MenuItem('Exit', menu_options.exit_app), 
         )

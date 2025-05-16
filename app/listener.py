@@ -1,8 +1,7 @@
-import time
 import keyboard
-from pynput.keyboard import Key, Controller
 import screeninfo
-import webview
+
+SINGLE_INSTANCE_PORT = 23897
 
 from webview_manager import get_webview_instance
 import menu_options
@@ -49,11 +48,11 @@ class Listener:
 
     def show_main_ui(self):
         # Load the React UI
-        self.webUiObj.load_url("http://localhost:8000/#launcher")
+        self.webUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher")
 
         # Resize the window to the desired dimensions
-        window_width = 800
-        window_height = 450
+        window_width = 900
+        window_height = 600
         self.webUiObj.resize(window_width, window_height)
 
         # Get screen dimensions (first monitor)
@@ -81,5 +80,5 @@ class Listener:
         # Run the Electron-React UI
         self.webUiObj.resize(0, 0)
         self.webUiObj.hide()
-        self.webUiObj.load_url("http://localhost:8000/#loading")
+        self.webUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#loading")
         self.isWebUiObjVisible = False

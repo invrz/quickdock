@@ -1,14 +1,13 @@
 import json
 import screeninfo
 import winshell
-import sys
+import webview_manager
 import os
 import subprocess
 
-import webview
-
-from jsapi import API
 from intializer import update_system_tray_state
+
+SINGLE_INSTANCE_PORT = 23897
 
 def write_new_preferences_to_json(newPreferences, filename):
     try:
@@ -55,8 +54,6 @@ def toggle_auto_update(icon):
 
 
 def openHelperUi():
-    # Run the Electron-React UI
-
     # Get screen dimensions (first monitor)
     screen = screeninfo.get_monitors()[0]
     screen_width = screen.width
@@ -68,16 +65,12 @@ def openHelperUi():
     # Calculate the position to center the window
     window_x = (screen_width - window_width) // 2
     window_y = (screen_height - window_height) // 2
-
-    api = API()
     
-    helperWebUI = webview.create_window("QuickDock Control Center", "http://localhost:8000/#apps", width=window_width, height=window_height, frameless=False, on_top=False, js_api=api)
-    
-    # Move the window to the calculated position after webview starts
-    def move_window():
-        helperWebUI.move(window_x, window_y)
-    
-    return helperWebUI, move_window
+    helperUiObj = webview_manager.get_webview_instance('helper')
+    helperUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#apps")
+    helperUiObj.resize(window_width, window_height)
+    helperUiObj.move(window_x, window_y)
+    helperUiObj.show()
 
 def open_data_folder():
     # Open the data folder

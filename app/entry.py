@@ -1,68 +1,57 @@
 import datetime
 import os
 import threading
+import requests
 from main import start_application
-from menu_options import openHelperUi
 from routes import MakeHandlerClassWithBakedInDirectory
 from socketserver import TCPServer
 
+SINGLE_INSTANCE_PORT = 23897
+
+def notify_main_instance():
+    try:
+        requests.post("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/show_helper_ui", timeout=1)
+    except Exception as e:
+        print("Could not notify main instance:", e)
+
 def start_http_server():
-    webdir = os.getcwd() + "\\ui\\dist"
-    
-    # Start the HTTP server on port 8000 with a Custom Handler to initialize server at webdir
+    webdir = os.path.join(os.getcwd(), "ui", "dist")
     handler = MakeHandlerClassWithBakedInDirectory(webdir)
-    httpd = TCPServer(('', 8000), handler)
-    
-    # Log the server starting
+    httpd = TCPServer(('', SINGLE_INSTANCE_PORT), handler)
     print("Starting HTTP server at http://localhost:8000")
-    
-    # Serve forever
     httpd.serve_forever()
 
+def is_main_instance_running():
+    try:
+        resp = requests.post("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/test", timeout=1)
+        return resp.status_code == 200
+    except Exception:
+        return False
+
 def main():
-    logFileName = "./logs/log_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".log"
+    logFileName = "./logs/log_" + datetime.datetime.now().strftime("%Y-%m-%d") + ".log"
+    os.makedirs("./logs", exist_ok=True)
     log = open(logFileName, 'a')
     try:
-        # open log file in append mode
-        log.write("try block\n")
-        # If trigger file exists, check if the file has same pid as current process. If not the user is trying to run a new instance and hence should run the UI application
-        if os.path.exists('./trigger.lock'):
-            log.write("file exists\n")
-            file = open(r'trigger.lock', 'r')
-            instancePID = file.read()
-            if instancePID != str(os.getpid()):    
-                openHelperUi()
-            file.close()
+        log.write("========================= INSTANCE START =========================\n")
+        if is_main_instance_running():
+            log.write("Another instance detected. Notifying main instance to launch helper UI.\n")
+            notify_main_instance()
+            return
         else:
-            log.write("file doesnt exists\n")
-            # Make a trigger file and write pid in the trigger file
-            file = open(r'trigger.lock', 'w')
-            file.write(str(os.getpid()))
-            file.close()
-            
-            # Start application and the HTTP server in a separate thread
+            log.write("No other instance detected. Starting main app.\n")
             # Start HTTP server in a background thread
             server_thread = threading.Thread(target=start_http_server)
-            server_thread.daemon = True  # This ensures it stops when the main program exits
+            server_thread.daemon = True
             server_thread.start()
-            
-            # Start application
-            start_application()
 
-            # remove lock file on application exit
-            os.remove('./trigger.lock')
+            # Start application
+            start_application(logger=log)
 
     except Exception as e:
         log.write(str(e) + "\n")
     finally:
-        log.write("finally block\n")
-        if os.path.exists('./trigger.lock'):
-            file = open(r'trigger.lock', 'r')
-            instancePID = file.read()
-            file.close()
-            if instancePID == str(os.getpid()):
-                # remove lock file on application exit
-                os.remove('./trigger.lock')
+        log.write("========================= INSTANCE  EXIT =========================\n")
         log.close()
 
 if __name__ == "__main__":

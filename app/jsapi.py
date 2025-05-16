@@ -1,10 +1,11 @@
 import os
 import shutil
-import time
 from pynput.keyboard import Key, Controller
 import webview
 import sys
 import subprocess
+
+SINGLE_INSTANCE_PORT = 23897
 
 class API:
     # def __init__(self, window):
@@ -24,7 +25,7 @@ class API:
             os.makedirs('./ui/dist/public/images')
 
         # Create a hidden webview window to open the file picker dialog        
-        filePickerUI = webview.create_window("File Picker", "http://localhost:8000/launcher", width=0, height=0, hidden=True)
+        filePickerUI = webview.create_window("File Picker", "http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/launcher", width=0, height=0, hidden=True)
         selected_file = filePickerUI.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=file_types)
         if selected_file:
             # copy selected image to cwd/ui/dist/public/images and return the file path from the cwd/ui/dist/public/images
@@ -43,7 +44,7 @@ class API:
             file_types = (('All Files', '*.*'))
 
         
-        filePickerUI = webview.create_window("File Picker", "http://localhost:8000/launcher", width=0, height=0, hidden=True)
+        filePickerUI = webview.create_window("File Picker", "http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/launcher", width=0, height=0, hidden=True)
         selected_file = filePickerUI.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=file_types)
         if selected_file:
             return selected_file[0]  # Return the full file path

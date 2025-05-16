@@ -1,6 +1,8 @@
 import webview
 from jsapi import API
 
+SINGLE_INSTANCE_PORT = 23897
+
 # Global WebView instances
 webview_instances = {}
 
@@ -12,8 +14,8 @@ def initialize_webviews():
 
     # Launcher UI
     webview_instances['launcher'] = webview.create_window(
-        "QuickDock Launcher",
-        "http://localhost:8000/#launcher",
+        "GhostDeck Launcher",
+        "http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher",
         width=800,
         height=450,
         frameless=True,
@@ -24,8 +26,8 @@ def initialize_webviews():
 
     # Helper UI
     webview_instances['helper'] = webview.create_window(
-        "QuickDock Helper",
-        "http://localhost:8000/#helper",
+        "GhostDeck Helper",
+        "http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#helper",
         width=600,
         height=400,
         resizable=True,
@@ -37,7 +39,8 @@ def start_webviews():
     """
     Start the WebView event loop.
     """
-    webview.start(icon="./assets/icon.png")
+    icon_path = './assets/icon.png'
+    webview.start(icon=icon_path)
 
 def get_webview_instance(name):
     """
