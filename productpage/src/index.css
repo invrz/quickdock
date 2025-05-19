@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.errorMsg{
+  display: none;
+}
+
+.logo{
+  display: block;
+  margin: auto;
+  width: 100%;
+}
+.logo p{
+  font-family: 'Montserrat', 'Consolas', 'Ubuntu Mono', 'Roboto Mono', monospace;
+  color: #fafaea;
+  font-size: 0.8rem;
+}
+.logo p span{
+  display: inline-block;
+  font-family: 'Montserrat', 'Consolas', 'Ubuntu Mono', 'Roboto Mono', monospace;
+  color: #fafada;
+  font-size: 2rem;
+}
+.logo p span.invrz{
+  display: inline-block;
+  transform: rotateY(180deg);
+  font-family: 'Montserrat', 'Consolas', 'Ubuntu Mono', 'Roboto Mono', monospace;
+  color: #cb2037;
+  font-size: 2.25rem;
+}
+
+.pageWrapper{
+  padding-bottom: 2.25rem;
+}
+
+.grayText{
+  color: #bcbcac;
+}
+
+::-webkit-scrollbar{
+  display: none;
+}
+
+@media (prefers-color-scheme: light){
+  .logo{
+    filter: invert(100%) hue-rotate(180deg);
+  }
+}
