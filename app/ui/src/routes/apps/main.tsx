@@ -327,6 +327,10 @@ const Apps = () => {
         }
     }
 
+    const closeWebviewWindow = () => {
+        window.pywebview.api.close_window();
+    }
+
     useEffect(() => {
         getAndSetPreferences();
         getAppList();
@@ -335,6 +339,10 @@ const Apps = () => {
 
     return (
         <div className="page-view bg-body text-body">
+            <div className="window-title bg-muted-light text-muted">
+                <span className="window-title-text">GhostDeck Helper UI</span>
+                <button className="window-title-action bg-error border--none border--smooth" onClick={()=>closeWebviewWindow()}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
+            </div>  
             <div className="grid-row row-top row-center col-height-10">
 
                 <SideNav routeActive={"apps"} />
