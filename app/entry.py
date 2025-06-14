@@ -5,12 +5,14 @@ import requests
 from main import start_application
 from routes import MakeHandlerClassWithBakedInDirectory
 from socketserver import TCPServer
+import socket
 
 SINGLE_INSTANCE_PORT = 23897
 
 def notify_main_instance():
     try:
-        requests.post("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/show_helper_ui", timeout=1)
+        requests.post("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/show_helper_ui")
+        return
     except Exception as e:
         print("Could not notify main instance:", e)
 
@@ -21,23 +23,24 @@ def start_http_server():
     print("Starting HTTP server at http://localhost:8000")
     httpd.serve_forever()
 
-def is_main_instance_running():
+def is_main_instance_running(log):
     try:
-        resp = requests.post("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/test", timeout=1)
-        return resp.status_code == 200
-    except Exception:
-        return False
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            result = s.connect_ex(('localhost', SINGLE_INSTANCE_PORT))
+            return result == 0  # Port is busy if result is 0
+    except Exception as e:
+        log.write(str(e) + "\n")
 
 def main():
     logFileName = "./logs/log_" + datetime.datetime.now().strftime("%Y-%m-%d") + ".log"
     os.makedirs("./logs", exist_ok=True)
-    log = open(logFileName, 'a')
+    log = open(logFileName, 'a+')
     try:
         log.write("========================= INSTANCE START =========================\n")
-        if is_main_instance_running():
+        if is_main_instance_running(log):
             log.write("Another instance detected. Notifying main instance to launch helper UI.\n")
             notify_main_instance()
-            return
+            raise SystemExit("Exiting application")
         else:
             log.write("No other instance detected. Starting main app.\n")
             # Start HTTP server in a background thread

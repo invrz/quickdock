@@ -32,6 +32,7 @@ def initialize_webviews():
         on_top=True,
         js_api=api,
         hidden=True,
+        resizable=True,
     )
 
     # Helper UI

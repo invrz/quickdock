@@ -1,7 +1,7 @@
 import threading
 from listener import Listener
 from tray_manager import create_tray_icon
-from webview_manager import initialize_webviews, start_webviews, get_webview_instance
+from webview_manager import initialize_webviews, start_webviews
 from preferences import load_preferences
 from configure_startup import run_at_startup
 

@@ -83,4 +83,4 @@ def open_data_folder():
         subprocess.Popen(f'explorer "{folder_path}"')
 
 def exit_app():
-    os._exit(0)
+    raise SystemExit("Exiting application")

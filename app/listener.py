@@ -3,13 +3,12 @@ import screeninfo
 
 SINGLE_INSTANCE_PORT = 23897
 
-from webview_manager import get_webview_instance
+import webview_manager
 import menu_options
 
 class Listener:
     def __init__(self):
         self.key_pressed_list = []
-        self.webUiObj = get_webview_instance('launcher')
         self.isWebUiObjVisible = False
 
     def start_listening(self):
@@ -30,7 +29,6 @@ class Listener:
         try:
             self.clear_key_pressed_list()
             self.stop_listening()
-            self.webUiObj.destroy()
             menu_options.exit_app()
         except Exception as e:
             print(f"Error quitting app: {e}")
@@ -42,43 +40,34 @@ class Listener:
                 self.hide_main_ui()
             else:
                 self.clear_key_pressed_list()
-                self.show_main_ui()
+                self.show_launcher_ui()
         except Exception as e:
             print(f"Error processing key press: {e}")
 
-    def show_main_ui(self):
-        # Load the React UI
-        self.webUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher")
-
-        # Resize the window to the desired dimensions
-        window_width = 900
-        window_height = 600
-        self.webUiObj.resize(window_width, window_height)
-
+    def show_launcher_ui(self):        
         # Get screen dimensions (first monitor)
         screen = screeninfo.get_monitors()[0]
         screen_width = screen.width
         screen_height = screen.height
 
+        window_width = int(screen_width * 0.5)
+        window_height = int(screen_height * 0.5)
+
         # Calculate the position to center the window
         window_x = (screen_width - window_width) // 2
         window_y = (screen_height - window_height) // 2
-
-        # Move the window to the calculated position
-        self.webUiObj.move(window_x, window_y)
-
-        # Show the WebView window
-        self.webUiObj.show()
-
-        # Don't use on_top as method, it is an attribute, it makes the webview come in focus when it is shown.
-        self.webUiObj.on_top = True
-
-        # Flag that the WebView is visible
+        
+        launcherUiObj = webview_manager.get_webview_instance('launcher')
+        launcherUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher")
+        launcherUiObj.resize(window_width, window_height)
+        launcherUiObj.move(window_x, window_y)
+        launcherUiObj.show()
         self.isWebUiObjVisible = True
 
     def hide_main_ui(self):
-        # Run the Electron-React UI
-        self.webUiObj.resize(0, 0)
-        self.webUiObj.hide()
-        self.webUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#loading")
-        self.isWebUiObjVisible = False
+        launcherUiObj = webview_manager.get_webview_instance('launcher')
+        if launcherUiObj is not None:
+            launcherUiObj.resize(0, 0)
+            launcherUiObj.hide()
+            launcherUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#loading")
+            self.isWebUiObjVisible = False
