@@ -4,6 +4,7 @@ from pynput.keyboard import Key, Controller
 import webview
 import sys
 import subprocess
+import webview_manager
 
 SINGLE_INSTANCE_PORT = 23897
 
@@ -75,4 +76,12 @@ class API:
             return True
         except Exception as e:
             print('Failed to launch application:', e)
+            return False
+
+    def close_window(self):
+        helperUiObj = webview_manager.get_webview_instance('helper')
+        if helperUiObj is not None:
+            helperUiObj.resize(0, 0)
+            helperUiObj.hide()
+            helperUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#loading")
             return False

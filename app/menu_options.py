@@ -83,10 +83,4 @@ def open_data_folder():
         subprocess.Popen(f'explorer "{folder_path}"')
 
 def exit_app():
-    # remove lock file on application exit
-    try:
-        os.remove('./trigger.lock')
-    except Exception as e:
-        print(f"Error removing lock file: {e}")
-    # Placeholder function to exit the application
-    os._exit(0)
+    raise SystemExit("Exiting application")

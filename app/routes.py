@@ -63,35 +63,50 @@ def MakeHandlerClassWithBakedInDirectory(directory):
        self.wfile.write(response_json.encode('utf-8'))
 
     def getShowHelperUi(self):
-       screen = screeninfo.get_monitors()[0]
-       screen_width = screen.width
-       screen_height = screen.height
+      try:
+        screen = screeninfo.get_monitors()[0]
+        screen_width = screen.width
+        screen_height = screen.height
 
-       window_width = int(screen_width * 0.8)
-       window_height = int(screen_height * 0.8)
+        window_width = int(screen_width * 0.8)
+        window_height = int(screen_height * 0.8)
 
-       # Calculate the position to center the window
-       window_x = (screen_width - window_width) // 2
-       window_y = (screen_height - window_height) // 2
+        # Calculate the position to center the window
+        window_x = (screen_width - window_width) // 2
+        window_y = (screen_height - window_height) // 2
+          
+        helperUiObj = get_webview_instance('helper')
+        helperUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#apps")
+        helperUiObj.resize(window_width, window_height)
+        helperUiObj.move(window_x, window_y)
+        helperUiObj.show()
         
-       helperUiObj = get_webview_instance('helper')
-       helperUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#apps")
-       helperUiObj.resize(window_width, window_height)
-       helperUiObj.move(window_x, window_y)
-       helperUiObj.show()
-       
-       post_data = "opening helper ui"
-       response_obj = {
-         "status": "success",
-         "message": "POST request received successfully",
-         "data": post_data  # Echo the received data
-       }
-       response_json = json.dumps(response_obj)
-       self.send_response(200)
-       self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
-       self.send_header('Content-Length', str(len(response_json)))  # Set content length
-       self.end_headers()
-       self.wfile.write(response_json.encode('utf-8'))
+        post_data = "opening helper ui"
+        response_obj = {
+          "status": "success",
+          "message": "POST request received successfully",
+          "data": post_data  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
+      except:
+        response_obj = {
+          "statusCode": 404,
+          "status": "failed",
+          "message": "Launch Helper UI request failed",
+          "data": {"value": "unable to launch helper ui"}  # Echo the received data
+        }
+        response_json = json.dumps(response_obj)
+        self.send_response(404)
+        self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+        self.send_header('Content-Length', str(len(response_json)))  # Set content length
+        self.end_headers()
+        self.wfile.write(response_json.encode('utf-8'))
+      
 
     def handle_launch_app(self):
         # Handle launching an app based on the data in the request body

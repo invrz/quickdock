@@ -35,7 +35,6 @@ def create_tray_icon():
             MenuItem('Open Control Center', menu_options.openHelperUi), 
             Menu.SEPARATOR, 
             MenuItem(startupOptionText, startupToggle, checked=lambda MenuItem: startupOptionState), 
-            # MenuItem(autoUpdateText, historyToggle, checked=lambda MenuItem: autoUpdateState),
             Menu.SEPARATOR, 
             MenuItem('Exit', menu_options.exit_app), 
         )

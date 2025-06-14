@@ -231,3 +231,20 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(14px);
 }
+
+.window-title {
+  height: 32px;
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 6px 10px;
+}
+.window-title .window-title-text {
+  text-align: left;
+}
+.window-title .window-title-action {
+  text-align: right;
+}
