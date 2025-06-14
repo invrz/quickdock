@@ -118,31 +118,29 @@ const Apps = () => {
 
     const selectFile = async () => {
         try {
-            const selectedFile = await window.pywebview.api.open_file_dialog();
-            if (selectedFile) {
-
-                // const getIconPathBody = {
-                //     "exePath": filePath,
-                //     "appName": appName,
-                // }
-                // const iconPathReq = await fetch("http://localhost:8000/getInstalledAppIcon", {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     },
-                //     body: JSON.stringify(getIconPathBody)
-                // });
-
-                // const iconPathRes = await iconPathReq.json();
-                // setIconPath(iconPathRes.data);
-                // Get the file name with extension
-                const appNameWithExtension = selectedFile.split('\\').pop()?.split('/').pop();
+            const dummyBody = {
+                "body": "nothing here"
+            }
+            const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/pickUpFile`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dummyBody)
+            });
+            const res = await req.json();
+            if (res.statusCode !== 200) {
+                console.error("Error creating default preferences file");
+                return;
+            }
+            if (res.data) {
+                const appNameWithExtension = res.data.split('\\').pop()?.split('/').pop();
                 if (appNameWithExtension) {
                     // Remove the file extension
                     const appName = appNameWithExtension.replace(/\.[^/.]+$/, "");
                     setAppName(appName);
                 }
-                setFilePath(selectedFile);
+                setFilePath(res.data);
             } else {
                 console.log('No file selected');
             }
@@ -153,9 +151,23 @@ const Apps = () => {
 
     const selectIcon = async () => {
         try {
-            const selectedFile = await window.pywebview.api.open_imagepicker_dialog();
-            if (selectedFile) {
-                setIconPath(selectedFile);
+            const dummyBody = {
+                "body": "nothing here"
+            }
+            const req = await fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/pickUpImage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dummyBody)
+            });
+            const res = await req.json();
+            if (res.statusCode !== 200) {
+                console.error("Error creating default preferences file");
+                return;
+            }
+            if (res.data) {
+                setIconPath(res.data);
             } else {
                 console.log('No file selected');
             }
@@ -354,10 +366,10 @@ const Apps = () => {
                             <ul className="list-view-vertical">
                                 <li className="grid-row row-middle row-left">
                                     <div className="col-width-7">
-                                        <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add New App</button>
+                                        <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add any installed app</button>
                                     </div>
                                     <div className="col-width-7">
-                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforfile")}>Add New File</button>
+                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforfile")}>Add any image, file, shortcut or script</button>
                                     </div>
                                 </li>
                                 <br/>

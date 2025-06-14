@@ -248,3 +248,6 @@ input:checked + .slider:before {
 .window-title .window-title-action {
   text-align: right;
 }
+.bg-grayscale-light{
+  background-color: #acacac;
+}

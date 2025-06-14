@@ -31,3 +31,19 @@ Another instance detected. Notifying main instance to launch helper UI.
 ========================= INSTANCE START =========================
 Another instance detected. Notifying main instance to launch helper UI.
 ========================= INSTANCE  EXIT =========================
+========================= INSTANCE START =========================
+Another instance detected. Notifying main instance to launch helper UI.
+========================= INSTANCE  EXIT =========================
+========================= INSTANCE START =========================
+Another instance detected. Notifying main instance to launch helper UI.
+========================= INSTANCE  EXIT =========================
+========================= INSTANCE START =========================
+No other instance detected. Starting main app.
+Error in start_application: create_window() got an unexpected keyword argument 'debug'
+create_window() got an unexpected keyword argument 'debug'
+========================= INSTANCE  EXIT =========================
+========================= INSTANCE START =========================
+No other instance detected. Starting main app.
+Error in start_application: create_window() got an unexpected keyword argument 'debug'
+create_window() got an unexpected keyword argument 'debug'
+========================= INSTANCE  EXIT =========================
