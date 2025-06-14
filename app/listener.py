@@ -1,10 +1,10 @@
+import os
 import keyboard
 import screeninfo
 
 SINGLE_INSTANCE_PORT = 23897
 
 import webview_manager
-import menu_options
 
 class Listener:
     def __init__(self):
@@ -29,7 +29,7 @@ class Listener:
         try:
             self.clear_key_pressed_list()
             self.stop_listening()
-            menu_options.exit_app()
+            os._exit(0)
         except Exception as e:
             print(f"Error quitting app: {e}")
 

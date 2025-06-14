@@ -20,7 +20,7 @@ def start_http_server():
     webdir = os.path.join(os.getcwd(), "ui", "dist")
     handler = MakeHandlerClassWithBakedInDirectory(webdir)
     httpd = TCPServer(('', SINGLE_INSTANCE_PORT), handler)
-    print("Starting HTTP server at http://localhost:8000")
+    print("Starting HTTP server at http://localhost:"+str(SINGLE_INSTANCE_PORT))
     httpd.serve_forever()
 
 def is_main_instance_running(log):
@@ -40,7 +40,7 @@ def main():
         if is_main_instance_running(log):
             log.write("Another instance detected. Notifying main instance to launch helper UI.\n")
             notify_main_instance()
-            raise SystemExit("Exiting application")
+            os._exit(0)
         else:
             log.write("No other instance detected. Starting main app.\n")
             # Start HTTP server in a background thread
@@ -56,6 +56,7 @@ def main():
     finally:
         log.write("========================= INSTANCE  EXIT =========================\n")
         log.close()
+        os._exit(0)
 
 if __name__ == "__main__":
     main()

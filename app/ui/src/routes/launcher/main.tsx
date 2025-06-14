@@ -347,6 +347,25 @@ const Launcher = () => {
     }
   }
 
+  const launchHelperUI = () => {
+    const requestBody = {
+      body: "nothing here",
+    };
+    const req = fetch(`http://localhost:${SINGLE_INSTANCE_PORT}/show_helper_ui`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    req.then((res) => {
+      if (res.status !== 200) {
+        console.error("Error launching Helper UI");
+      }
+    });
+  }
+
   useEffect(() => {
     getAndSetPreferences();
     if (appList.length === 0) {
@@ -397,17 +416,26 @@ const Launcher = () => {
             ) : (
               <div className="grid-row--vertical col-width-15 col-height-8 row-middle row-center">
                 {
-                  appList.length !== 0 && searchParam.length === 0 ? (
-                    <h1 className="text-align--center">
-                      No results found, press Enter <br />
-                      to search the web...
-                    </h1>
+                  appList.length !== 0 && searchParam.length !== 0 ? (
+                    <>
+                      <h2 className="text-align--center">
+                        No results found, press Enter to search the web or add new apps/files <br/>
+                        from Control Center.
+                      </h2>
+                      <button className="primary-add-button border--none border--smooth bg-body text-secondary" onClick={() => {launchHelperUI()}}>
+                        Open Control Center
+                      </button>
+                    </>
                   ) : (
-                    <h1 className="text-align--center">
-                      No quick launch apps found, <br />
-                      you can add them by opening "Control Center" <br />
-                      from the system tray/action center area.
-                    </h1>
+                    <>
+                      <h3 className="text-align--center">
+                        No quick launch apps found you can add them by opening "Control Center" <br />
+                        from the system tray/action center area. Or clicking the button below.
+                      </h3>
+                      <button className="primary-add-button border--none border--smooth bg-body text-secondary" onClick={() => {launchHelperUI()}}>
+                        Open Control Center
+                      </button>
+                    </>
                   )
                 }
                 <br />
