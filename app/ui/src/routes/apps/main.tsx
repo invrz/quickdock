@@ -109,7 +109,11 @@ const Apps = () => {
             setIconPath('');
             setAppName('');
 
-            toggleWindow("windowviewforfile");
+            if (/^(https?:\/\/|data:image\/)/i.test(filePath)) {
+                toggleWindow("windowviewforwebsite");
+            }else{
+                toggleWindow("windowviewforfile");
+            }
         }
         else {
             console.error("File/App or Icon Path is missing.")
@@ -182,6 +186,18 @@ const Apps = () => {
             return;
         }
         try {
+            if (/^(https?:\/\/|data:image\/)/i.test(filePath)) {
+                // open in new browser window
+                const newWin = window.open(filePath, '_blank');
+                console.log(newWin);
+                const result = await window.pywebview.api.launch_application(filePath, "website cc");
+                if (result) {
+                    console.log('Website launched successfully');
+                } else {
+                    alert('Failed to launch the website.');
+                }
+                return;
+            }
             const result = await window.pywebview.api.launch_application(filePath, "control center");
             if (result) {
                 console.log('Application launched successfully');
@@ -199,6 +215,18 @@ const Apps = () => {
             return;
         }
         try {
+            if (/^(https?:\/\/|data:image\/)/i.test(appFilePath)) {
+                // open in new browser window
+                const newWin = window.open(appFilePath, '_blank');
+                console.log(newWin);
+                const result = await window.pywebview.api.launch_application(appFilePath, "website cc");
+                if (result) {
+                    console.log('Website launched successfully');
+                } else {
+                    alert('Failed to launch the website.');
+                }
+                return;
+            }
             const result = await window.pywebview.api.launch_application(appFilePath, "control center");
             if (result) {
                 console.log('Application launched successfully');
@@ -312,6 +340,9 @@ const Apps = () => {
     }
 
     const handleIconPathForAppList = (getIconPath: string) => {
+        if (/^(https?:\/\/|data:image\/)/i.test(getIconPath)) {
+            return getIconPath;
+        }
         if(getIconPath.length < 100){
             return `http://localhost:${SINGLE_INSTANCE_PORT}/${getIconPath}`;
         }
@@ -365,13 +396,20 @@ const Apps = () => {
                         <div className="col-width-12">
                             <ul className="list-view-vertical">
                                 <li className="grid-row row-middle row-left">
-                                    <div className="col-width-7">
-                                        <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforapp")}>Add any installed app</button>
-                                    </div>
-                                    <div className="col-width-7">
-                                    <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary" onClick={() => toggleWindow("windowviewforfile")}>Add any image, file, shortcut or script</button>
+                                    <div className="col-width-14 dropdown-container">
+                                        <div className="dropdown-trigger">
+                                            <button className="primary-add-button border--none border--smooth bg-secondary-light text-secondary">
+                                                Add a new
+                                            </button>
+                                            <ul className="dropdown-menu">
+                                                <li onClick={() => toggleWindow("windowviewforapp")}>Installed App</li>
+                                                <li onClick={() => toggleWindow("windowviewforfile")}>Image, Shortcut or Script</li>
+                                                <li onClick={() => toggleWindow("windowviewforwebsite")}>Website</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
+
                                 <br/>
                                 {appList.map((app, index) => {
                                     return (
@@ -392,6 +430,35 @@ const Apps = () => {
                                     );
                                 })}
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="window-view padding--large window-view--small" id="windowviewforwebsite">
+                <div className="window-title bg-muted-light text-muted">
+                    <span className="window-title-text">Add your favorite websites</span>
+                    <button className="window-title-action bg-error border--none border--smooth" onClick={() => toggleWindow("windowviewforwebsite")}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
+                </div>
+                <div className="window-content bg-body text-body">
+                    <h2 className="heading--h2">Add a new website or webapp to quicklaunch</h2>
+                    <div className="form-wrapper grid-row row-bottom row-center padding--small">
+                        <div className="col-width-12">
+                            {iconPath && <div className="grid-row row-center"><img className="img-icon border--none" src={handleIconPathForAppList(iconPath)} alt={appName} /></div>}
+                            {filePath && <h3 className="heading--h3 text-align--center">{appName}</h3>}
+                        </div>
+                        <div className="col-width-12">
+                            <input className="primary-add-input bg-body border-body--dark border--thin border--solid border--smoother text-align--center text-body" type="url" placeholder="Enter website URL" value={filePath} onChange={(e) => setFilePath(e.target.value)} />
+                        
+                            {filePath && <input className="primary-add-input bg-body border-body--dark border--thin border--solid border--smoother text-align--center text-body" type="text" placeholder="Custom webapp name (recommended)" value={appName} onChange={(e) => setAppName(e.target.value)} />}                        
+                        
+                            {filePath && <input className="primary-add-input bg-body border-body--dark border--thin border--solid border--smoother text-align--center text-body" type="url" placeholder="Webapp Icon URL (recommended)" value={iconPath} onChange={(e) => setIconPath(e.target.value)} />}
+                        </div>
+                        <div className="col-width-12">
+                            <button className="primary-add-button border--none border--smooth bg-error text-error" onClick={launchApp} disabled={!filePath}>Test Launch Website/WebApp</button>
+                        </div>
+                        <div className="col-width-12">
+                            <button className="primary-add-button border--none border--smooth bg-brand-dark text-brand" onClick={addAppToList} disabled={!filePath}>Add To List</button>
                         </div>
                     </div>
                 </div>

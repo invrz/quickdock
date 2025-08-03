@@ -1,5 +1,6 @@
 import os
 import shutil
+import webbrowser
 from pynput.keyboard import Key, Controller
 import webview
 import sys
@@ -54,6 +55,31 @@ class API:
 
     def launch_application(self, file_path, source):
         try:
+            if(source == "website cc2"):
+                #in case launch from control center fails launch from here
+                webbrowser.open(file_path)
+                return True
+            if(source == "website cc"):
+                #this is handled from control center do nothing, just return
+                return True
+            if(source == "website2"):
+                #in case launch from launcher fails launch from here
+                keyboard = Controller()
+                keyboard.press(Key.ctrl)
+                keyboard.press(Key.space)
+                keyboard.release(Key.space)
+                keyboard.release(Key.ctrl)
+                webbrowser.open(file_path)
+                return True
+            if(source == "website"):
+                #this is handled from launcher, just simulate ctrl+space and return
+                keyboard = Controller()
+                keyboard.press(Key.ctrl)
+                keyboard.press(Key.space)
+                keyboard.release(Key.space)
+                keyboard.release(Key.ctrl)
+                return True
+
             if sys.platform.startswith('win'):
                 subprocess.Popen([file_path], shell=True)
             elif sys.platform.startswith('darwin'):

@@ -9,6 +9,10 @@
   padding: 10px 12px;
 }
 
+.websiteInput{
+  width: 100%;
+}
+
 input, select{
   width: 360px;
   max-width: 80%;
@@ -21,6 +25,13 @@ input, select{
 
 #quiz-window{
   display: none;
+}
+
+.primary-add-input{
+  padding: 8px 16px !important;
+  width: 90% !important;
+  max-width: 90% !important;
+  margin: 1% !important;
 }
 
 .primary-add-button{
@@ -250,4 +261,66 @@ input:checked + .slider:before {
 }
 .bg-grayscale-light{
   background-color: #acacac;
+}
+
+/*Dropdown classes*/
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.dropdown-trigger {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-trigger .primary-add-button {
+  width: 240px;
+  max-width: 90%;
+  padding: 8px 16px;
+  cursor: pointer;
+  background-color: var(--highlight);
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu {
+  position: absolute;
+  padding: 0;
+  top: 8px;
+  left: 240px;
+  background-color: #1c1f22;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  margin-top: 4px;
+  display: none;
+  min-width: 200px;
+  z-index: 10;
+  font-weight: normal;
+}
+
+.dropdown-trigger:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  list-style: none;
+  padding: 10px 16px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.dropdown-menu li:hover {
+  background-color: var(--highlight);
+  color: #fff;
+  font-weight: bold;
+}
+
+.dropdown-menu li:active {
+  background-color: #69f569;
+  color: #000;
 }

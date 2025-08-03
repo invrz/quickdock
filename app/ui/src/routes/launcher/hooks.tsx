@@ -64,6 +64,17 @@ export const useLauncherHooks = () => {
             return;
         }
         try {
+            if (/^(https?:\/\/|data:image\/)/i.test(filePath)) {
+                // open in new browser window
+                window.open(filePath, '_blank');            
+                const result = await window.pywebview.api.launch_application(filePath, "website");
+                if (result) {
+                    console.log('Website launched successfully');
+                } else {
+                    alert('Failed to launch the website.');
+                }
+                return;
+            }
             const result = await window.pywebview.api.launch_application(filePath, "launcher");
             if (result) {
                 console.log('Application launched successfully');

@@ -3,3 +3,7 @@ keyboard
 screeninfo
 pystray
 winshell
+requests
+pynput
+pywin32
+

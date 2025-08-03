@@ -320,6 +320,9 @@ const Launcher = () => {
   };
 
   const handleIconPathForAppList = (getIconPath: string) => {
+    if (/^(https?:\/\/|data:image\/)/i.test(getIconPath)) {
+        return getIconPath;
+    }
     if (getIconPath.length < 100) {
       return `http://localhost:${SINGLE_INSTANCE_PORT}/${getIconPath}`;
     }
