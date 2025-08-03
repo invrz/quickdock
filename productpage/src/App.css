@@ -12,3 +12,15 @@
 .margin-bottom--large{
   margin-bottom: 2rem;
 }
+#windowviewid .window-title, #windowviewid .window-content{
+  width: 72vw;
+  max-width: 720px;
+  margin: auto;
+}
+#windowviewid .window-content{
+  height: 41vw;
+  max-height: 405px;
+}
+#windowviewid .window-title{
+  margin-top: 28vh;
+}
