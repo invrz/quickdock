@@ -1,6 +1,7 @@
 import os
 import keyboard
 import screeninfo
+import ctypes
 
 SINGLE_INSTANCE_PORT = 23897
 
@@ -44,18 +45,33 @@ class Listener:
         except Exception as e:
             print(f"Error processing key press: {e}")
 
-    def show_launcher_ui(self):        
+    def show_launcher_ui(self):
         # Get screen dimensions (first monitor)
-        screen = screeninfo.get_monitors()[0]
+        monitors = screeninfo.get_monitors()
+        screen = monitors[0]
+        for m in monitors:
+            if m.is_primary:
+                screen = m
         screen_width = screen.width
         screen_height = screen.height
 
-        window_width = int(screen_width * 0.5)
-        window_height = int(screen_height * 0.5)
+        def get_dpi_scale():
+            try:
+                ctypes.windll.shcore.SetProcessDpiAwareness(2)  # Per-monitor aware
+            except Exception:
+                pass
+
+            dpi = ctypes.windll.user32.GetDpiForSystem()
+            return dpi / 96  # 96 is baseline DPI
+
+        scale_factor = get_dpi_scale()
+
+        window_width = int(screen_width * 0.4)
+        window_height = int(screen_height * 0.4)
 
         # Calculate the position to center the window
-        window_x = (screen_width - window_width) // 2
-        window_y = (screen_height - window_height) // 2
+        window_x = int((screen_width - window_width) * 0.5 / scale_factor)
+        window_y = int((screen_height - window_height) * 0.5 / scale_factor)
         
         launcherUiObj = webview_manager.get_webview_instance('launcher')
         launcherUiObj.load_url("http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher")

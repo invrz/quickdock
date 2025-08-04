@@ -8,6 +8,9 @@ import sys
 
 import screeninfo
 import webview
+import pythoncom
+import win32com.client
+from pynput.keyboard import Key, Controller
 
 from appList import get_uninstallable_apps
 from icon_extractor import extract_icon_as_blob
@@ -51,6 +54,8 @@ def MakeHandlerClassWithBakedInDirectory(directory):
             self.pickUpFile()    
         elif self.path == '/pickUpImage':  # Define an endpoint to get apps list
             self.pickUpImage()    
+        elif self.path == "/searchLocalFilesAndFolders":
+           self.search_local_files_and_folders()
         else:
             # Handle other POST requests
             self.send_response(404)
@@ -167,6 +172,14 @@ def MakeHandlerClassWithBakedInDirectory(directory):
 
     def getShowHelperUi(self):
       try:
+        
+        #hide launcher ui on helper ui launch
+        keyboard = Controller()
+        keyboard.press(Key.ctrl)
+        keyboard.press(Key.space)
+        keyboard.release(Key.space)
+        keyboard.release(Key.ctrl)
+
         screen = screeninfo.get_monitors()[0]
         screen_width = screen.width
         screen_height = screen.height
@@ -209,7 +222,76 @@ def MakeHandlerClassWithBakedInDirectory(directory):
         self.send_header('Content-Length', str(len(response_json)))  # Set content length
         self.end_headers()
         self.wfile.write(response_json.encode('utf-8'))
-      
+    
+    def search_local_files_and_folders(self):
+        """
+        Uses Windows Search API to find files and folders matching the search_query.
+        Returns a list of dictionaries with 'name' and 'path' keys.
+        """
+        
+        length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(length)
+        received_data = json.loads(post_data.decode('utf-8'))
+        # print(received_data)
+        search_query = received_data["body"]
+
+        try:
+            max_results=50
+            pythoncom.CoInitialize()  # Required for COM in Python threads
+
+            connection = win32com.client.Dispatch("ADODB.Connection")
+            recordset = win32com.client.Dispatch("ADODB.Recordset")
+
+            connection.Open("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';")
+
+            # Include both name and path in the SELECT statement
+            query = f"""
+            SELECT System.ItemPathDisplay, System.FileName 
+            FROM SYSTEMINDEX 
+            WHERE System.FileName LIKE '%{search_query}%'
+            """
+
+            recordset.Open(query, connection)
+
+            results = []
+            count = 0
+            while not recordset.EOF and count < max_results:
+                path = recordset.Fields.Item("System.ItemPathDisplay").Value
+                name = recordset.Fields.Item("System.FileName").Value
+                results.append({'fileName': name, 'filePath': path})
+                recordset.MoveNext()
+                count += 1
+
+            recordset.Close()
+            connection.Close()
+
+            fileListData = json.loads(json.dumps(results))
+            
+            response_obj = {
+              "statusCode": 200,
+              "status": "success",
+              "message": "GET request received successfully",
+              "data": fileListData  # Echo the received data
+            }
+            response_json = json.dumps(response_obj)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+            self.send_header('Content-Length', str(len(response_json)))  # Set content length
+            self.end_headers()
+            self.wfile.write(response_json.encode('utf-8'))
+        except Exception as e:
+          response_obj = {
+            "statusCode": 404,
+            "status": "failed",
+            "message": "GET request failed",
+            "data": {"value": "unable to get file"}  # Echo the received data
+          }
+          response_json = json.dumps(response_obj)
+          self.send_response(404)
+          self.send_header('Content-type', 'application/json')  # Ensure GET response is also JSON
+          self.send_header('Content-Length', str(len(response_json)))  # Set content length
+          self.end_headers()
+          self.wfile.write(response_json.encode('utf-8'))
 
     def handle_launch_app(self):
         # Handle launching an app based on the data in the request body

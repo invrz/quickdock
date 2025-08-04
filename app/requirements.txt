@@ -6,4 +6,5 @@ winshell
 requests
 pynput
 pywin32
-
+pyinstaller
+ctypes

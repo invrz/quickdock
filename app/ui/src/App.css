@@ -324,3 +324,58 @@ input:checked + .slider:before {
   background-color: #69f569;
   color: #000;
 }
+
+/*search results css*/
+.search-results-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 equal-width columns */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-result-item {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+  filter: contrast(1.6) brightness(1.4) saturate(1.6) ;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  color: inherit;
+  word-break: break-all;
+}
+
+.tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  max-width: 400px;
+  text-align: left;
+  padding: 8px;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%; /* above the element */
+  left: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  white-space: normal;
+}
+
+.tooltip-wrapper:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+
+.centerCenter{
+  display: block;
+  margin: auto !important;
+}

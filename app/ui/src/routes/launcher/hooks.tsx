@@ -1,4 +1,4 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useRef} from 'react';
 
 interface AppListItemInterface {
     appName: string;
@@ -6,11 +6,18 @@ interface AppListItemInterface {
     iconPath: string;
 }
 
+interface SearchResultsInterface {
+    fileName: string;
+    filePath: string;
+}
+
 interface AppListInterface {
     appName: AppListItemInterface;
+    isSelected: boolean;
 }
 
 export const useLauncherHooks = () => {
+    const [searchResults, setSearchResults] = useState<SearchResultsInterface[]>([]);
     const [searchParam, setSearchParam] = useState("");
     const [selectedApp, setSelectedApp] = useState("");
     const [appList, setAppList] = useState<AppListInterface[]>([]);
@@ -21,6 +28,7 @@ export const useLauncherHooks = () => {
     const [lightMode, setLightMode] = useState("false");
     const [searchEngineUrl, setSearchEngineUrl] = useState("");
     const [searchBarInFocus, setSearchBarInFocus] = useState(false);
+    const searchBarRef = useRef<HTMLInputElement>(null);
 
     const SINGLE_INSTANCE_PORT = 23897
 
@@ -54,7 +62,7 @@ export const useLauncherHooks = () => {
         const res = await req.json();
         const parsedData = JSON.parse(res.data);
         setAppList(parsedData);
-        setAppListToRender(parsedData);    
+        setAppListToRender(parsedData);
         setIsLoaded(true);
     };
 
@@ -86,45 +94,54 @@ export const useLauncherHooks = () => {
         }
     };
 
+    const selectApp = (index: number) => {
+        setAppListToRender((prevList) =>
+            prevList.map((app, i) => ({
+            ...app,
+            isSelected: i === index,
+            }))
+        );
+        setSelectedApp(appListToRender[index]?.appName.appName || "");
+    };
+
+
     // Debounced search logic
     const filterAppList = useCallback(() => {
-        const filteredAppList = appList.filter((app) =>
-            app.appName.appName.toLowerCase().includes(searchParam.toLowerCase())
-        );
-        setAppListToRender(filteredAppList);
+    const filteredAppList = appList.filter((app) =>
+        app.appName.appName.toLowerCase().includes(searchParam.toLowerCase())
+    );
+
+    const updatedList = filteredAppList.map((app, index) => ({
+        ...app,
+        isSelected: index === 0,
+    }));
+
+    setAppListToRender(updatedList);
+    setSelectedApp(updatedList[0]?.appName.appName || "");
     }, [searchParam, appList]);
 
+
     const handleMouseOverIcon = (appName: string) => {
-        let currentIndex = appListToRender.findIndex((app) => app.appName.appName === selectedApp);
-        const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
-        if (hoveredAppPrev) {        
-            lightMode ===  "true"
-            ? hoveredAppPrev.classList.remove("app-icon-hovered")
-            : hoveredAppPrev.classList.remove("app-icon-hovered--dark");
+        const index = appListToRender.findIndex(
+            (app) => app.appName.appName === appName
+        );
+        if (index !== -1) {
+            selectApp(index);
         }
-        setSelectedApp(appName);
-        currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName)
-        const hoveredApp = document.querySelector("#app-id-" + currentIndex) as HTMLElement;
-        if (hoveredApp) {        
-            lightMode ===  "true"
-            ? hoveredApp.classList.add("app-icon-hovered")
-            : hoveredApp.classList.add("app-icon-hovered--dark");
-        }
-    }
+    };
+
     const handleMouseOutIcon = (appName: string) => {
-        let currentIndex = appListToRender.findIndex((app) => app.appName.appName === appName);
-        const hoveredAppPrev = document.querySelector("#app-id-" + (currentIndex)) as HTMLElement;
-        if (hoveredAppPrev) {        
-            lightMode ===  "true"
-            ? hoveredAppPrev.classList.remove("app-icon-hovered")
-            : hoveredAppPrev.classList.remove("app-icon-hovered--dark");
-        }
-        setSelectedApp("Type here to search your deck or the web");
-    }
+        return appName;
+        // Optional: clear hover when moving out of icon area
+        // selectApp(-1); // Or do nothing if keeping current selection
+    };
+
 
     return {
         searchParam,
         setSearchParam,
+        searchResults,
+        setSearchResults,
         selectedApp,
         setSelectedApp,
         appList,
@@ -150,5 +167,7 @@ export const useLauncherHooks = () => {
         setSearchEngineUrl,
         searchBarInFocus,
         setSearchBarInFocus,
+        searchBarRef,
+        selectApp,
     };
 }

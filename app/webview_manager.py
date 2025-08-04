@@ -26,8 +26,8 @@ def initialize_webviews():
     webview_instances['launcher'] = webview.create_window(
         "GhostDeck Launcher",
         "http://localhost:"+str(SINGLE_INSTANCE_PORT)+"/#launcher",
-        width=800,
-        height=450,
+        width=400,
+        height=225,
         frameless=True,
         on_top=True,
         js_api=api,
