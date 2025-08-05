@@ -1,5 +1,9 @@
 import Logo from '../../assets/logo.png';
 
+import MicrosoftLogo from "../../assets/micosoftLogo.svg";
+import AppleLogo from "../../assets/appleLogo.svg";
+import LinuxLogo from "../../assets/linuxLogo.svg";
+
 import featureGif1 from '../../assets/invisible-till-needed.gif';
 import featureSvg1 from "../../assets/keyboard-solid.svg";
 import featureSvg2 from "../../assets/gears-solid.svg";
@@ -30,19 +34,19 @@ const Home = () => {
       <div className="page-view" style={{ background: 'var(--high-contrast-bg)' }}>
         
         {/* Header / Hero */}
-        <header id="hero" className="grid-row row-middle row-center col-width-15 col-height-10" style={{ background: '#000' }}>
+        <header id="hero" className="grid-row row-middle row-center col-width-15 col-height-10">
           <div className="col-width-12">
             <div className=" object-alignment-wrapper">
-              <img className="col-width-6 col-width-15-sm object-align--center" src={Logo} alt="GhostDeck Logo"/>
+              <img className="col-width-6 col-width-15-sm object-align--center zIndexFull" src={Logo} alt="GhostDeck Logo"/>
             </div>
-            <h1 style={{ color: 'white', fontSize: '3.6rem', textAlign: 'center' }}>
+            <h1 className="zIndexFull text--xxlarge text--bold text-body text-align--center">
               GhostDeck
             </h1>
-            <p className='text-body text-align--center'>
+            <p className='text-body text-align--center zIndexFull'>
               A quick app launcher for minimalists<br/><br/>
-              <span className='code--inline padding-small bg-secondary'>
+              <button onClick={() => ctrlSpaceHotkeyAction()} className='padding-medium text--regsmall bg-body-dark border--none border--smooth text-body text--bold'>
                 Ctrl + Space
-              </span>
+              </button>
             </p>
             {/* <nav style={{ textAlign: 'center', marginTop: '1rem' }}>
               <a href="#features" style={{ color: 'var(--secondary-text)', margin: '0 1rem' }}>Features</a>
@@ -157,10 +161,11 @@ const Home = () => {
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+              onClick={() => ctrlSpaceHotkeyAction()}
             >
               Get GhostDeck
             </button>
-            <button
+            {/* <button
               className="row-center col-height-auto margin--small"
               style={{
                 background: 'var(--highlight-bg)',
@@ -176,7 +181,7 @@ const Home = () => {
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
             >
               Hitting Mac OS and Linux soon
-            </button>
+            </button> */}
           </div>
         </section>
         
@@ -202,12 +207,28 @@ const Home = () => {
 
       <div className="window-view padding--small" id="windowviewid">
         <div className="window-title bg-muted-light text-muted">
-          <span className="window-title-text">Window Title Goes Here</span>
+          <span className="window-title-text">Get GhostDeck</span>
           <button className="window-title-action bg-error border--none border--smooth" onClick={ctrlSpaceHotkeyAction}>&nbsp;&nbsp; X &nbsp;&nbsp;</button>
         </div>
         <div className="window-content bg-body-dark text-body">
           <div className="content-view padding--small">
-            <h1>Window Content Goes Here {"(It Is Going To Be Different In Preview)"}</h1>
+            <div className="grid-row row-center row-middle col-width-15 col-height-4">
+              <a className='icon-link border--circular'>
+                <img className="icon-icon inactive-icon" src={AppleLogo} alt="Windows Logo" />
+                <p className="icon-tooltip">Coming soon for MacOs</p>
+              </a>
+              <a className='icon-link border--circular' href="/GhostDeck_Installer.exe" download>
+                <img className="icon-icon" src={MicrosoftLogo} alt="Windows Logo" />
+                <p className="icon-tooltip">Download now for Windows</p>
+              </a>
+              <a className='icon-link border--circular'>
+                <img className="icon-icon inactive-icon" src={LinuxLogo} alt="Windows Logo" />
+                <p className="icon-tooltip">Coming soon for Linux</p>
+              </a>
+            </div>
+            <div className="grid-row row-center row-middle col-width-15 col-height-1">
+              <h1 className='ta--center' style={{fontFamily: 'monospace'}}>take control of your desktop</h1>
+            </div>
           </div>
         </div>
       </div>

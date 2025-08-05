@@ -1,5 +1,9 @@
 /* @import 'tailwindcss' */
 
+.text--xxlarge{
+  font-size: 3.36rem;
+  font-family: 'Consolas', monospace;
+}
 .text--xlarge{
   font-size: 2.24rem;
 }
@@ -8,6 +12,12 @@
 }
 .text-regsmall{
   font-size: 0.6rem;
+}
+.padding-small {
+  padding: 0.2rem 0.4rem;
+}
+.padding-medium {
+  padding: 0.5rem 1rem;
 }
 .margin-bottom--large{
   margin-bottom: 2rem;
@@ -23,4 +33,91 @@
 }
 #windowviewid .window-title{
   margin-top: 28vh;
+}
+
+#hero {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, #5eead4, transparent 40%),
+              radial-gradient(circle at 80% 30%, #60a5fa, transparent 40%),
+              radial-gradient(circle at 50% 80%, #f472b6, transparent 40%);
+  background-size: 200% 200%;
+  animation: moveLiquid 20s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* Optional overlay for readability */
+#hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(60px);
+  background-color: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+@keyframes moveLiquid {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.zIndexFull {
+  z-index: 1;
+}
+.window-view .window-content{
+  min-height: 60vh !important;
+}
+.window-view .window-title{
+  margin-top: 20vh !important;
+}
+.icon-link{
+  width: 72px;
+  height: 72px;
+  margin: auto;
+  display: block;
+  border: 3px solid transparent;
+  text-decoration: none;
+}
+.icon-icon{
+  width: 100%;
+  height: 100%;
+  transition: 0.3s;
+  padding: 16px;
+}
+.icon-tooltip{
+  position: relative;
+  bottom: -30px;
+  left: -40px;
+  background-color: var(--primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: 0.3s;
+  width: 150px;
+  text-align: center;
+}
+.icon-link:hover .icon-tooltip{
+  opacity: 1;
+}
+.icon-link:hover{
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary);
+}
+.inactive-icon{
+  filter:  sepia(100%) grayscale(100%);
+  opacity: 0.3;
 }
