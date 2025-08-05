@@ -66,8 +66,8 @@ class Listener:
 
         scale_factor = get_dpi_scale()
 
-        window_width = int(screen_width * 0.4)
-        window_height = int(screen_height * 0.4)
+        window_width = int(screen_width * 0.5)
+        window_height = int(screen_height * 0.5)
 
         # Calculate the position to center the window
         window_x = int((screen_width - window_width) * 0.5 / scale_factor)
