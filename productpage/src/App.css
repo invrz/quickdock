@@ -1,8 +1,37 @@
-/* @import 'tailwindcss' */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro');
+@import url('https://fonts.googleapis.com/css2?family=Lora');
 
+.text-montserrat{
+  font-family: 'Montserrat', sans-serif;
+}
+.text-ibmplexsans{
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.text-merriweathersans{
+  font-family: 'Merriweather Sans', sans-serif;
+}
+.text-sourcecodepro{
+  font-family: 'Source Code Pro', monospace;
+}
+.text-sourcesanspro{
+  font-family: 'Source Sans Pro', monospace;
+}
+.text-lora{
+  font-family: 'Lora', sans-serif;
+}
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  scroll-snap-type: proximity;
+}
 .text--xxlarge{
   font-size: 3.36rem;
-  font-family: 'Consolas', monospace;
 }
 .text--xlarge{
   font-size: 2.24rem;
@@ -34,17 +63,20 @@
 #windowviewid .window-title{
   margin-top: 28vh;
 }
+button{
+  cursor: pointer;
+}
 
 #hero {
   position: relative;
   width: 100%;
-  height: 100vh; /* Full viewport height */
   overflow: hidden;
-  background: radial-gradient(circle at 20% 20%, #5eead4, transparent 40%),
-              radial-gradient(circle at 80% 30%, #60a5fa, transparent 40%),
-              radial-gradient(circle at 50% 80%, #f472b6, transparent 40%);
+  background: radial-gradient(circle at 20% 20%, #00846e, transparent 40%),
+            radial-gradient(circle at 80% 30%, #003f94, transparent 40%),
+            radial-gradient(circle at 50% 80%, #8e0c50, transparent 40%);
   background-size: 200% 200%;
-  animation: moveLiquid 20s ease-in-out infinite;
+  background-position: 0% 0%;
+  animation: moveLiquid 40s ease-in-out infinite;
   z-index: 0;
 }
 
@@ -57,8 +89,22 @@
   width: 100%;
   height: 100%;
   filter: blur(60px);
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: transparent;
   z-index: 1;
+}
+
+#footer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, #00846e, transparent 40%),
+            radial-gradient(circle at 80% 30%, #003f94, transparent 40%),
+            radial-gradient(circle at 50% 80%, #8e0c50, transparent 40%);
+  background-size: 200% 200%;
+  background-position: 100% 100%;
+  animation: moveLiquid 40s ease-in-out infinite;
+  backdrop-filter: blur(60px);
+  z-index: 0;
 }
 
 @keyframes moveLiquid {
@@ -120,4 +166,124 @@
 .inactive-icon{
   filter:  sepia(100%) grayscale(100%);
   opacity: 0.3;
+}
+.ul-halfwidth-items{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ul-halfwidth-items li{
+  padding: 1rem;
+  background-color: var(--body-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+.ul-halfwidth-items li:hover{
+  background-color: var(--body-bg-lighter);
+}
+.slideshow {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.slide {
+  width: 20%;
+  overflow: hidden;
+  margin: auto 0.5%;
+  background: var(--body-bg-darker);
+  color: transparent;
+  transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+
+/* When any .slide inside is hovered */
+.slideshow:has(.slide:hover) .slide {
+  width: 4%;
+  margin: auto 0.5%;
+}
+
+/* The hovered one gets 80% */
+.slideshow:has(.slide:hover) .slide:hover {
+  width: 80%;
+  margin: auto 0.5%;
+  color: #acacac;
+  background: var(--body-bg);
+}
+
+.slide-img{
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+.slide-img img{
+  width: inherit;
+  height: inherit;
+  object-fit: cover;
+}
+.slide-text {
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  z-index: 3;
+  padding: 2rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content:flex-end;
+  align-items: flex-start;
+}
+.slide-text *{
+  text-wrap: wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .ul-halfwidth-items{
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .slideshow {
+    flex-direction: column;
+  }
+
+  .slide {
+    width: 100%; /* Make each slide take full width */
+    margin: 0 0 1rem 0;      /* Optional: spacing between slides vertically */
+    height: 100px;
+  }
+
+  /* When any .slide inside is hovered */
+  .slideshow:has(.slide:hover) .slide {
+    margin: auto 0.5%;
+    height: 100px;
+    width: 100%; /* Make each slide take full width */
+  }
+
+  /* The hovered one gets 80% */
+  .slideshow:has(.slide:hover) .slide:hover {
+    height: 360px;
+    margin: auto 0.5%;
+    color: #acacac;
+    background: var(--body-bg);
+    width: 100%;
+  }
+
+  .slide-text {
+    width: 80%;
+    height: inherit;
+    position: absolute;
+    z-index: 3;
+    padding: 0.5rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-end;
+    align-items: flex-start;
+  }
 }
